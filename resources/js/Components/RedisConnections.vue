@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { Link } from '@inertiajs/vue3';
 import { CheckCircleIcon } from '@heroicons/vue/24/outline'
 
 defineProps({
@@ -56,11 +56,11 @@ defineProps({
           {{ connection.database }}
         </td>
         <td>
-          <a :href="route('connect', {name: name})">
+          <Link :href="route('connect', {name: name})">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" class="self-center shrink-0 stroke-red-500 w-6 h-6 mx-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
             </svg>
-          </a>
+          </Link>
         </td>
       </tr>
     </tbody>
