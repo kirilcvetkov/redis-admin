@@ -8,7 +8,6 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
 
   <AdminLayout>
     <template #navbar>
-
       <ul class="flex flex-wrap flex-col p-4 mt-4 rounded-lg md:flex-row md:mt-0 md:text-sm md:font-medium">
         <li v-for="(count, letter) in $page.props.alphabet">
           <Link
