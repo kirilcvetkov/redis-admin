@@ -44,12 +44,9 @@ defineProps({
       :href="route('get', { id: itemKey })"
       :active="route().current('connections')"
       v-if="! children"
-      custom
-      v-slot="{ navigate }"
     >
       <button
         v-if="! children"
-        @click="navigate"
         role="link"
         type="button"
         class="text-xs flex items-center pl-2 w-full text-base font-normal text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"

@@ -1,6 +1,14 @@
 <script setup>
   defineProps({
-    item: Object,
+    item: {
+      type: Object,
+      default: {
+        type: 'default',
+        ttl: -1,
+        encoding: 'default',
+        refcount: 0,
+      }
+    },
   });
 </script>
 

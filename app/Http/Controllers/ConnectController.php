@@ -25,7 +25,13 @@ class ConnectController extends Controller
     {
         return Inertia::render('Admin', [
             'alphabet' => (new RedisController())->alphabet($name),
-            // 'tree' => (new RedisController())->index($name),
+            'tree' => (new RedisController())->index($name),
+            'get' => [
+                'type' => 'default',
+                'ttl' => -1,
+                'encoding' => 'default',
+                'refcount' => 0,
+            ]
         ]);
     }
 }

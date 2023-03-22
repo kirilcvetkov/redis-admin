@@ -1,13 +1,18 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import DisplayPanel from "@/components/DisplayPanel.vue";
+import TreePanel from "@/components/TreePanel.vue";
 </script>
 
 <template>
   <Head title="Admin" />
 
   <AdminLayout>
-    <template #navbar>
+    <TreePanel />
+    <DisplayPanel />
+
+    <!-- <template #navbar>
       <ul class="flex flex-wrap flex-col p-4 mt-4 rounded-lg md:flex-row md:mt-0 md:text-sm md:font-medium">
         <li v-for="(count, letter) in $page.props.alphabet">
           <Link
@@ -25,6 +30,6 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
           </Link>
         </li>
       </ul>
-    </template>
+    </template> -->
   </AdminLayout>
 </template>
