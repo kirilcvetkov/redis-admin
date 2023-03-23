@@ -23,15 +23,13 @@ const logout = () => {
 </script>
 
 <template>
-  <TreePanel />
-
   <BackgroundLayout>
-    <nav class="sm:ml-64 px-2 sm:px-4 py-2.5 rounded">
+    <nav class="top-0 inset-x-0 fixed bg-gray-50 h-14 z-30 transition-position w-screen lg:w-auto p-2">
       <div class="container flex flex-nowrap items-center justify-between mx-auto">
         <!-- Logo -->
         <div class="shrink-0 flex items-center">
           <Link :href="route('connections')">
-            <ApplicationMark class="block h-9 w-auto" />
+            <img class="w-32 object-contain" src="@/../assets/logo.png" />
           </Link>
         </div>
 
@@ -91,7 +89,10 @@ const logout = () => {
       </div>
     </nav>
 
-    <DisplayPanel />
+    <div class="mt-14">
+      <TreePanel />
+      <DisplayPanel />
+    </div>
 
     <div class="sm:ml-64 flex justify-center mt-16 px-6 sm:items-center sm:justify-between">
       <div class="text-center text-sm text-gray-500 dark:text-gray-400 sm:text-left">

@@ -1,14 +1,14 @@
 <script setup>
+import TreeAlphabet from "@/components/TreeAlphabet.vue";
 import TreeList from "@/components/TreeList.vue";
 </script>
 
 <template>
-  <aside class="fixed top-0 left-0 w-64 h-full" aria-label="Sidenav">
-    <div class="overflow-y-auto py-5 px-3 h-full bg-white dark:bg-gray-800">
-      <div class="pb-3">
-        <img class="object-contain w-auto" src="@/../assets/logo.png" />
-      </div>
-
+  <aside class="fixed left-0 w-96 h-full columns-2 gap-1 overflow-y-auto bg-white dark:bg-gray-800" aria-label="Sidenav">
+    <div class="w-24 h-full pt-2">
+      <TreeAlphabet />
+    </div>
+    <div class="h-full pt-2">
       <TreeList :tree="$page.props.tree" :main="true" />
     </div>
   </aside>

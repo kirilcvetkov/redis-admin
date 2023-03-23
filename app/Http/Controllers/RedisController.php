@@ -18,15 +18,14 @@ class RedisController extends Controller
 
         foreach ([...range('A', 'Z'), ...range(0, 9)] as $filter) {
             $cursor = null;
-            $letters[$filter] = 0;
 
             foreach ($redis->command('scan', [$cursor, $filter . '*', $page]) as $key) {
-                $letters[$filter]++;
+                $letters[$filter] = ($letters[$filter] ?? 0) + 1;
             }
 
             if ($filter != strtolower($filter)) {
                 foreach ($redis->command('scan', [$cursor, strtolower($filter) . '*', $page]) as $key) {
-                    $letters[$filter]++;
+                    $letters[$filter] = ($letters[$filter] ?? 0) + 1;
                 }
             }
         }
