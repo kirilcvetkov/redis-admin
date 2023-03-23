@@ -11,7 +11,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="sm:ml-96 min-h-screen p-4 rounded-lg">
+  <div class="sm:ml-64 mt-14 min-h-screen p-4 rounded-lg">
     <DisplayTitle :id="id" />
     <DisplayDetails :item="$page.props.get" />
     <DisplayValue :item="$page.props.get" />

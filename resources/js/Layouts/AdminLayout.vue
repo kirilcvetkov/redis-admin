@@ -23,20 +23,11 @@ const logout = () => {
 </script>
 
 <template>
-  <BackgroundLayout>
-    <nav class="top-0 inset-x-0 fixed bg-gray-50 h-14 z-30 transition-position w-screen lg:w-auto p-2">
-      <div class="container flex flex-nowrap items-center justify-between mx-auto">
-        <!-- Logo -->
-        <div class="shrink-0 flex items-center">
-          <Link :href="route('connections')">
-            <img class="w-32 object-contain" src="@/../assets/logo.png" />
-          </Link>
-        </div>
+  <TreePanel />
 
-        <!-- Navigation Links -->
-        <div class="w-full block md:w-auto" id="navbar-default">
-          <slot name="navbar" />
-        </div>
+  <BackgroundLayout>
+    <nav class="top-0 sm:ml-64 inset-x-0 fixed bg-gray-50 h-14 z-30 transition-position w-screen lg:w-auto p-2">
+      <div class="container flex flex-nowrap items-center justify-between mx-auto">
 
         <div v-if="canLogin" class="sm:fixed sm:top-0 sm:right-0 p-6 text-right">
           <Link v-if="$page.props.auth.user" :href="route('connections')" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Connections</Link>
@@ -89,10 +80,7 @@ const logout = () => {
       </div>
     </nav>
 
-    <div class="mt-14">
-      <TreePanel />
-      <DisplayPanel />
-    </div>
+    <DisplayPanel />
 
     <div class="sm:ml-64 flex justify-center mt-16 px-6 sm:items-center sm:justify-between">
       <div class="text-center text-sm text-gray-500 dark:text-gray-400 sm:text-left">
