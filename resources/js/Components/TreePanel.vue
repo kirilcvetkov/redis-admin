@@ -1,5 +1,4 @@
 <script setup>
-import TreeAlphabet from "@/components/TreeAlphabet.vue";
 import TreeList from "@/components/TreeList.vue";
 </script>
 

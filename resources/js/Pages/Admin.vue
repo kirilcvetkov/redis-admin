@@ -1,8 +1,8 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import DisplayPanel from "@/components/DisplayPanel.vue";
 import TreePanel from "@/components/TreePanel.vue";
+import DisplayPanel from "@/components/DisplayPanel.vue";
 </script>
 
 <template>

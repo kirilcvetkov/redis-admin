@@ -27,12 +27,7 @@ const logout = () => {
 
   <BackgroundLayout>
     <nav class="top-0 sm:ml-64 inset-x-0 fixed bg-gray-50 h-14 z-30 transition-position w-screen lg:w-auto p-2">
-      <div class="container flex flex-nowrap items-center justify-between mx-auto">
-
-        <div v-if="canLogin" class="sm:fixed sm:top-0 sm:right-0 p-6 text-right">
-          <Link v-if="$page.props.auth.user" :href="route('connections')" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Connections</Link>
-        </div>
-
+      <div class="container flex flex-nowrap items-center justify-end mx-auto">
         <!-- Settings Dropdown -->
         <div v-if="$page.props.auth.user" class="ml-3 relative">
           <Dropdown align="right" width="48">
