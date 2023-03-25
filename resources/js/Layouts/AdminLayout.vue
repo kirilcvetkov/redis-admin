@@ -27,7 +27,7 @@ const logout = () => {
 
   <BackgroundLayout>
     <nav class="top-0 sm:ml-64 inset-x-0 fixed bg-gray-50 h-14 z-30 transition-position w-screen lg:w-auto p-2">
-      <div class="container flex flex-nowrap items-center justify-end mx-auto">
+      <div class="px-4 flex flex-nowrap items-center justify-end mx-auto">
         <!-- Settings Dropdown -->
         <div v-if="$page.props.auth.user" class="ml-3 relative">
           <Dropdown align="right" width="48">
