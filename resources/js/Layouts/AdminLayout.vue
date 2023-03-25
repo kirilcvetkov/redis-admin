@@ -10,7 +10,6 @@ import TreePanel from "@/components/TreePanel.vue";
 import DisplayPanel from "@/components/DisplayPanel.vue";
 
 defineProps({
-  id: String,
   canLogin: Boolean,
   canRegister: Boolean,
   laravelVersion: String,

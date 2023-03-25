@@ -10,28 +10,33 @@ use Inertia\Inertia;
 
 class ConnectController extends Controller
 {
-    public function index()
+    public function index(?string $selectedConnection = null)
     {
-        $connections = config('database.redis');
-        unset($connections['client'], $connections['options']);
+        $redisController = new RedisController($selectedConnection);
 
-        return Inertia::render('Connections', [
-            'connections' => $connections,
-            'selected' => key($connections),
+        return Inertia::render('Admin', [
+            'connections' => $redisController->getConnections(),
+            'selectedConnection' => $selectedConnection ?? key($redisController->getConnections()),
+            'tree' => $redisController->index(),
         ]);
     }
 
-    public function connect(string $name)
+    // public function connect(string $selectedConnection)
+    // {
+    //     return Inertia::render('Admin', [
+    //         'tree' => (new RedisController($selectedConnection))->index(),
+    //     ]);
+    // }
+
+    public function get(string $selectedConnection, string $key)
     {
+        $redisController = new RedisController($selectedConnection);
+// dd($redisController->show($key));
         return Inertia::render('Admin', [
-            'alphabet' => (new RedisController())->alphabet($name),
-            'tree' => (new RedisController())->index($name),
-            'get' => [
-                'type' => 'default',
-                'ttl' => -1,
-                'encoding' => 'default',
-                'refcount' => 0,
-            ]
+            'connections' => $redisController->getConnections(),
+            'selectedConnection' => $selectedConnection ?? key($redisController->getConnections()),
+            'tree' => $redisController->index(),
+            'item' => $redisController->show($key),
         ]);
     }
 }

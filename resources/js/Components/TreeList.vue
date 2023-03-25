@@ -16,6 +16,7 @@ defineProps({
       v-for="item in tree"
       :name="item.name"
       :key="item.key"
+      :count="item.count"
       :itemKey="item.key"
       :children="item.children"
     />

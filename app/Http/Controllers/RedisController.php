@@ -3,42 +3,58 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Redis\Connections\PhpRedisConnection;
+// use Illuminate\Redis\Connections\PhpRedisConnection;
 use Illuminate\Support\Facades\Redis;
 
 class RedisController extends Controller
 {
-    public function alphabet(string $name)
+    public function __construct(public ?string $selectedConnection = null)
     {
-        $redis = Redis::connection($name);
-        $redis->setOption(\Redis::OPT_SCAN, \Redis::SCAN_RETRY);
-
-        $letters = [];
-        $page = 100;
-
-        foreach ([...range('A', 'Z'), ...range(0, 9)] as $filter) {
-            $cursor = null;
-
-            foreach ($redis->command('scan', [$cursor, $filter . '*', $page]) as $key) {
-                $letters[$filter] = ($letters[$filter] ?? 0) + 1;
-            }
-
-            if ($filter != strtolower($filter)) {
-                foreach ($redis->command('scan', [$cursor, strtolower($filter) . '*', $page]) as $key) {
-                    $letters[$filter] = ($letters[$filter] ?? 0) + 1;
-                }
-            }
+        if (
+            ! is_null($this->selectedConnection)
+            && array_key_exists($this->selectedConnection, $this->getConnections())
+        ) {
+            return;
         }
 
-        return $letters;
+        $this->selectedConnection ??= array_key_first($this->getConnections());
     }
+
+    public function getSelectedConnection()
+    {
+        return $this->selectedConnection;
+    }
+
+    // public function alphabet()
+    // {
+    //     $redis = $this->getRedis();
+
+    //     $letters = [];
+    //     $page = 100;
+
+    //     foreach ([...range('A', 'Z'), ...range(0, 9)] as $filter) {
+    //         $cursor = null;
+
+    //         foreach ($redis->command('scan', [$cursor, $filter . '*', $page]) as $key) {
+    //             $letters[$filter] = ($letters[$filter] ?? 0) + 1;
+    //         }
+
+    //         if ($filter != strtolower($filter)) {
+    //             foreach ($redis->command('scan', [$cursor, strtolower($filter) . '*', $page]) as $key) {
+    //                 $letters[$filter] = ($letters[$filter] ?? 0) + 1;
+    //             }
+    //         }
+    //     }
+
+    //     return $letters;
+    // }
 
     /**
      * Display a listing of the resource.
      */
-    public function index(string $name)
+    public function index()
     {
-        $redis = Redis::connection($name);
+        $redis = $this->getRedis();
 
         $foundKeys = [];
         $page = 100;
@@ -47,15 +63,14 @@ class RedisController extends Controller
             $it = null;
 
             foreach ($redis->command('scan', [$it, $filter . '*', $page]) ?: [] as $key) {
-                $key = explode(':', $key);
-                $foundKeys = $this->fill($key, $foundKeys);
+                $foundKeys = $this->fill(explode(':', $key), $foundKeys);
             }
         }
 
         return $foundKeys;
     }
 
-    function fill($tree, $parent, $key = null)
+    private function fill($tree, $parent, $key = null)
     {
         if (empty($tree)) {
             return null;
@@ -67,8 +82,37 @@ class RedisController extends Controller
         $parent[$name]['name'] = $name;
         $parent[$name]['key'] = $key;
         $parent[$name]['children'] = $this->fill($tree, $parent[$name]['children'] ?? [], $key);
+        if (is_null($parent[$name]['children']) && $count = $this->getCount($key)) {
+            $parent[$name]['count'] = $count;
+        }
 
         return $parent;
+    }
+
+    public function getCount(string $key): int|null
+    {
+        // return $this->show($key)['size'] ?? null;
+        return match($this->getRedis()->type($key)) {
+            \Redis::REDIS_STRING => null,
+            \Redis::REDIS_LIST => $this->getRedis()->lLen($key),
+            default => $this->getRedis()->object('refcount', $key),
+        };
+    }
+
+    public function getConnections()
+    {
+        $connections = config('database.redis');
+        unset($connections['client'], $connections['options']);
+
+        return $connections;
+    }
+
+    public function getRedis()
+    {
+        $redis = Redis::connection($this->selectedConnection);
+        $redis->setOption(\Redis::OPT_SCAN, \Redis::SCAN_RETRY);
+
+        return $redis;
     }
 
     /**
@@ -90,68 +134,68 @@ class RedisController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $key)
     {
-        $request = $_REQUEST['key'] ?? null;
+        $redis = $this->getRedis();
 
-        if ($request) {
-            $ttl = $redis->ttl($request);
-            $encoding = $redis->object("encoding", $request);
-            $refcount = $redis->object("refcount", $request);
+        $ttl = $redis->ttl($key);
+        $encoding = $redis->object('encoding', $key);
+        $refcount = $redis->object('refcount', $key);
 
-            switch ($redis->type($request)) {
-                case Redis::REDIS_STRING:
-                    $type = 'String';
-                    $value = $redis->get($request);
-                    $size = strlen($value);
-                    break;
+        switch ($redis->type($key)) {
+            case \Redis::REDIS_STRING:
+                $type = 'String';
+                $value = $redis->get($key);
+                $size = strlen($value);
+                break;
 
-                case Redis::REDIS_SET:
-                    $type = 'Set';
-                    $value = $redis->sMembers($request);
-                    sort($value);
-                    $size = count($value);
-                    break;
+            case \Redis::REDIS_SET:
+                $type = 'Set';
+                $value = $redis->sMembers($key);
+                sort($value);
+                $size = count($value);
+                break;
 
-                case Redis::REDIS_LIST:
-                    $type = 'List';
-                    $value = $redis->get($request);
-                    $size = $redis->lLen($request);
-                    break;
+            case \Redis::REDIS_LIST:
+                $type = 'List';
+                $value = $redis->lRange($key, 0, -1);
+                $size = $redis->lLen($key);
+                break;
 
-                case Redis::REDIS_ZSET:
-                    $type = 'ZSet';
-                    $value = array_map(function($value) use ($redis, $request) {
-                        return [
-                            'score' => $redis->zScore($request, $value),
-                            'value' => $value,
-                        ];
-                    }, $redis->zRange($request, 0, -1));
-                    $size = count($value);
-                    break;
+            case \Redis::REDIS_ZSET:
+                $type = 'ZSet';
+                $value = array_map(function($value) use ($redis, $key) {
+                    return [
+                        'score' => $redis->zScore($key, $value),
+                        'value' => $value,
+                    ];
+                }, $redis->zRange($key, 0, -1));
+                $size = count($value);
+                break;
 
-                case Redis::REDIS_HASH:
-                    $type = 'Hash';
-                    $value = $redis->hGetAll($request);
-                    ksort($value);
-                    $size = count($value);
-                    break;
+            case \Redis::REDIS_HASH:
+                $type = 'Hash';
+                $value = $redis->hGetAll($key);
+                ksort($value);
+                $size = count($value);
+                break;
 
-                case Redis::REDIS_NOT_FOUND:
-                    $type = 'Not found';
-                    $value = $redis->get($request);
-                    break;
-            }
-
-            exit(json_encode(compact([
-                'type',
-                'ttl',
-                'encoding',
-                'refcount',
-                'value',
-            ]), JSON_PRETTY_PRINT));
+            case \Redis::REDIS_NOT_FOUND:
+                $type = 'Not found';
+                $value = $redis->get($key);
+                $size = null;
+                break;
         }
 
+        return [
+            'key' => $key,
+            'type' => $type,
+            'value' => $value,
+            'size' => $size,
+            'ttl' => $ttl,
+            'encoding' => $encoding,
+            'refcount' => $refcount,
+        ];
     }
 
     /**

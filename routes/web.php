@@ -23,17 +23,14 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/', [ConnectController::class, 'index'])
-        ->name('connections');
+    Route::get('/{selectedConnection?}', [ConnectController::class, 'index'])
+        ->name('admin');
 
-    Route::get('/connect/{name}', [ConnectController::class, 'connect'])
-        ->name('connect');
-
-    Route::get('/list/{letter}', [ConnectController::class, 'list'])
-        ->name('list');
-
-    Route::get('/get/{key}', [ConnectController::class, 'get'])
+    Route::get('/{selectedConnection}/{key}', [ConnectController::class, 'get'])
         ->name('get');
+
+    // Route::get('/connect/{name}', [ConnectController::class, 'connect'])
+    //     ->name('connect');
 
     // Route::get('/dashboard', function () {
     //     return Inertia::render('Dashboard');

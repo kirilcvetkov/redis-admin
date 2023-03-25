@@ -1,15 +1,11 @@
 <script setup>
 import { PencilSquareIcon, TrashIcon, CircleStackIcon } from '@heroicons/vue/24/outline'
-
-const props = defineProps({
-  id: String,
-});
 </script>
 
 <template>
   <div class="flex items-center justify-center mb-8 rounded bg-gray-50 dark:bg-gray-800 gap-6">
     <h5 class="text-2xl tracking-tight text-gray-900 dark:text-gray-200">
-      {{ id }}
+      {{ $page.props.item.key }}
     </h5>
     <div class="flex items-center justify-center gap-3">
       <button title="Edit">

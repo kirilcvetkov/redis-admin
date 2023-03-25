@@ -41,15 +41,15 @@ const logout = () => {
                         <div class="flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center">
-                                <Link :href="route('connections')">
+                                <Link :href="route('admin')">
                                     <ApplicationMark class="block h-9 w-auto" />
                                 </Link>
                             </div>
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <NavLink :href="route('connections')" :active="route().current('connections')">
-                                    Connections
+                                <NavLink :href="route('admin')" :active="route().current('admin')">
+                                    Admin
                                 </NavLink>
                             </div>
                         </div>
@@ -191,8 +191,8 @@ const logout = () => {
                 <!-- Responsive Navigation Menu -->
                 <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="sm:hidden">
                     <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink :href="route('connections')" :active="route().current('connections')">
-                            Connections
+                        <ResponsiveNavLink :href="route('admin')" :active="route().current('admin')">
+                            Admin
                         </ResponsiveNavLink>
                     </div>
 
