@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import TreePanel from "@/components/TreePanel.vue";
 import DisplayPanel from "@/components/DisplayPanel.vue";
@@ -9,7 +9,6 @@ defineOptions({ layout: AdminLayout })
 </script>
 
 <template>
-  <Head title="Admin" />
   <TreePanel />
   <DisplayPanel v-if="$page.props.item" />
   <Connections v-else />

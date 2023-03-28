@@ -6,7 +6,7 @@
         type: 'default',
         ttl: -1,
         encoding: 'default',
-        refcount: 0,
+        size: 0,
       }
     },
   });
@@ -19,7 +19,7 @@
         <th class="w-1/4 border border-slate-300 dark:border-slate-600 font-semibold p-2 text-slate-700 dark:text-slate-200">Type</th>
         <th class="w-1/4 border border-slate-300 dark:border-slate-600 font-semibold p-2 text-slate-700 dark:text-slate-200">TTL</th>
         <th class="w-1/4 border border-slate-300 dark:border-slate-600 font-semibold p-2 text-slate-700 dark:text-slate-200">Encoding</th>
-        <th class="w-1/4 border border-slate-300 dark:border-slate-600 font-semibold p-2 text-slate-700 dark:text-slate-200">Count</th>
+        <th class="w-1/4 border border-slate-300 dark:border-slate-600 font-semibold p-2 text-slate-700 dark:text-slate-200">Size</th>
       </tr>
     </thead>
     <tbody>
@@ -27,7 +27,7 @@
         <td class="border border-slate-300 dark:border-slate-700 p-4 text-slate-500 dark:text-slate-400">{{ item.type }}</td>
         <td class="border border-slate-300 dark:border-slate-700 p-4 text-slate-500 dark:text-slate-400">{{ item.ttl }}</td>
         <td class="border border-slate-300 dark:border-slate-700 p-4 text-slate-500 dark:text-slate-400">{{ item.encoding }}</td>
-        <td class="border border-slate-300 dark:border-slate-700 p-4 text-slate-500 dark:text-slate-400">{{ item.refcount }}</td>
+        <td class="border border-slate-300 dark:border-slate-700 p-4 text-slate-500 dark:text-slate-400">{{ item.size }}</td>
       </tr>
     </tbody>
   </table>

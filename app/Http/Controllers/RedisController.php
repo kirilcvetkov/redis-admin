@@ -60,9 +60,10 @@ class RedisController extends Controller
         $page = 100;
 
         foreach ([...range('A', 'Z'), ...range('a', 'z'), ...range(0, 9)] as $filter) {
-            $it = null;
+            // $it = null;
 
-            foreach ($redis->command('scan', [$it, $filter . '*', $page]) ?: [] as $key) {
+            // foreach ($redis->command('scan', [$it, $filter . '*', $page]) ?: [] as $key) {
+            foreach ($redis->command('keys', [$filter . '*']) ?: [] as $key) {
                 $foundKeys = $this->fill(explode(':', $key), $foundKeys);
             }
         }
@@ -86,16 +87,22 @@ class RedisController extends Controller
             $parent[$name]['count'] = $count;
         }
 
+        if (! empty($parent[$name]['children'])) {
+            ksort($parent[$name]['children']);
+        }
+
         return $parent;
     }
 
-    public function getCount(string $key): int|null
+    public function getCount(string $key, ?int $type = null, $value = null): int|null
     {
-        // return $this->show($key)['size'] ?? null;
-        return match($this->getRedis()->type($key)) {
-            \Redis::REDIS_STRING => null,
-            \Redis::REDIS_LIST => $this->getRedis()->lLen($key),
-            default => $this->getRedis()->object('refcount', $key),
+        return match($type ?? $this->getRedis()->type($key)) {
+            \Redis::REDIS_STRING => is_string($value) ? strlen($value) : 0,
+            \Redis::REDIS_SET => $this->getRedis()->sCard($key) ?: 0,
+            \Redis::REDIS_LIST => $this->getRedis()->lLen($key) ?: 0,
+            \Redis::REDIS_ZSET => $this->getRedis()->zCard($key) ?: 0,
+            \Redis::REDIS_HASH => $this->getRedis()->hLen($key) ?: 0,
+            default => is_array($value) ? count($value) : (is_string($value) ? strlen($value) : 0),
         };
     }
 
@@ -141,25 +148,23 @@ class RedisController extends Controller
         $ttl = $redis->ttl($key);
         $encoding = $redis->object('encoding', $key);
         $refcount = $redis->object('refcount', $key);
+        $typeId = $redis->type($key);
 
-        switch ($redis->type($key)) {
+        switch ($typeId) {
             case \Redis::REDIS_STRING:
                 $type = 'String';
                 $value = $redis->get($key);
-                $size = strlen($value);
                 break;
 
             case \Redis::REDIS_SET:
                 $type = 'Set';
                 $value = $redis->sMembers($key);
                 sort($value);
-                $size = count($value);
                 break;
 
             case \Redis::REDIS_LIST:
                 $type = 'List';
                 $value = $redis->lRange($key, 0, -1);
-                $size = $redis->lLen($key);
                 break;
 
             case \Redis::REDIS_ZSET:
@@ -170,20 +175,17 @@ class RedisController extends Controller
                         'value' => $value,
                     ];
                 }, $redis->zRange($key, 0, -1));
-                $size = count($value);
                 break;
 
             case \Redis::REDIS_HASH:
                 $type = 'Hash';
                 $value = $redis->hGetAll($key);
                 ksort($value);
-                $size = count($value);
                 break;
 
             case \Redis::REDIS_NOT_FOUND:
                 $type = 'Not found';
                 $value = $redis->get($key);
-                $size = null;
                 break;
         }
 
@@ -191,7 +193,7 @@ class RedisController extends Controller
             'key' => $key,
             'type' => $type,
             'value' => $value,
-            'size' => $size,
+            'size' => $this->getCount($key, $typeId, $value),
             'ttl' => $ttl,
             'encoding' => $encoding,
             'refcount' => $refcount,

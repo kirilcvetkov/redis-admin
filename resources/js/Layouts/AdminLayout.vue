@@ -1,5 +1,5 @@
 <script setup>
-import { Link, router } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import BackgroundLayout from '@/Layouts/BackgroundLayout.vue';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
 import Dropdown from '@/Components/Dropdown.vue';
@@ -22,6 +22,7 @@ const logout = () => {
 </script>
 
 <template>
+  <Head title="Admin" />
   <TreePanel />
 
   <BackgroundLayout>
