@@ -23,10 +23,13 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/{selectedConnection?}', [ConnectController::class, 'index'])
+    Route::get('/', [ConnectController::class, 'index'])
+        ->name('home');
+
+    Route::get('/admin/{selectedConnection?}', [ConnectController::class, 'index'])
         ->name('admin');
 
-    Route::get('/{selectedConnection}/{key}', [ConnectController::class, 'get'])
+    Route::get('/admin/{selectedConnection}/{key}', [ConnectController::class, 'get'])
         ->name('get');
 
     // Route::get('/connect/{name}', [ConnectController::class, 'connect'])

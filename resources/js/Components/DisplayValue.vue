@@ -17,10 +17,10 @@
         <tr>
           <th
             v-if="item.type != 'String'"
-            class="w-1/2 border border-slate-300 dark:border-slate-600 font-semibold p-2 text-slate-700 dark:text-slate-200"
+            class="border border-slate-300 dark:border-slate-600 font-semibold p-2 text-slate-700 dark:text-slate-200"
             v-text="item.type == 'ZSet' ? 'Score' : 'Key'"
           ></th>
-          <th class="w-1/2 border border-slate-300 dark:border-slate-600 font-semibold p-2 text-slate-700 dark:text-slate-200">
+          <th class="border border-slate-300 dark:border-slate-600 font-semibold p-2 text-slate-700 dark:text-slate-200">
             Value
           </th>
         </tr>

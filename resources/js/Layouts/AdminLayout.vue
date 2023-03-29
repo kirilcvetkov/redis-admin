@@ -7,6 +7,7 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import TreePanel from "@/components/TreePanel.vue";
+import Connections from "@/Pages/Connections.vue";
 import DisplayPanel from "@/components/DisplayPanel.vue";
 
 defineProps({
@@ -26,7 +27,7 @@ const logout = () => {
   <TreePanel />
 
   <BackgroundLayout>
-    <nav class="top-0 sm:ml-64 inset-x-0 fixed bg-gray-50 h-14 z-30 transition-position w-screen lg:w-auto p-2">
+    <nav class="top-0 sm:ml-64 inset-x-0 fixed bg-gray-900 h-14 z-30 transition-position w-screen lg:w-auto p-2">
       <div class="px-4 flex flex-nowrap items-center justify-end mx-auto">
         <!-- Settings Dropdown -->
         <div v-if="$page.props.auth.user" class="ml-3 relative">
@@ -75,7 +76,10 @@ const logout = () => {
       </div>
     </nav>
 
-    <DisplayPanel />
+    <div class="sm:ml-64 mt-14 min-h-screen p-4 rounded-lg">
+      <DisplayPanel v-if="$page.props.item" />
+      <Connections v-else />
+    </div>
 
     <div class="sm:ml-64 flex justify-center mt-16 px-6 sm:items-center sm:justify-between">
       <div class="text-center text-sm text-gray-500 dark:text-gray-400 sm:text-left">

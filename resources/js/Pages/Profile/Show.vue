@@ -1,16 +1,7 @@
-<script>
-import AdminLayout from '@/Layouts/AdminLayout.vue';
-
-export default {
-// Using a render function...
-  layout: (h, page) => h(AdminLayout, [page]),
-
-// Using shorthand syntax...
-  layout: AdminLayout,
-}
-</script>
-
 <script setup>
+import AppLayout from '@/Layouts/AppLayout.vue';
+defineOptions({ layout: AppLayout })
+
 import DeleteUserForm from '@/Pages/Profile/Partials/DeleteUserForm.vue';
 import LogoutOtherBrowserSessionsForm from '@/Pages/Profile/Partials/LogoutOtherBrowserSessionsForm.vue';
 import SectionBorder from '@/Components/SectionBorder.vue';
@@ -25,7 +16,7 @@ defineProps({
 </script>
 
 <template>
-  <AdminLayout title="Profile">
+  <AppLayout title="Profile">
     <template #header>
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">
         Profile
@@ -64,5 +55,5 @@ defineProps({
         </template>
       </div>
     </div>
-  </AdminLayout>
+  </AppLayout>
 </template>

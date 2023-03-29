@@ -26,11 +26,9 @@ defineProps({
     </thead>
     <tbody>
       <tr v-for="(connection, name) in connections">
-        <td class="p-4 text-slate-500 dark:text-slate-400"
-          @click="selected = name"
-        >
+        <td class="p-4 text-slate-500 dark:text-slate-400">
           <CheckCircleIcon
-            class="w-4"
+            class="w-8"
             :class="{
               'text-green-600': selected == name,
               'text-gray-600': selected != name,
@@ -38,7 +36,9 @@ defineProps({
           />
         </td>
         <td class="p-4 text-slate-500 dark:text-slate-400">
-          {{ name }}
+          <Link :href="route('admin', { selectedConnection: name })">
+            {{ name }}
+          </Link>
         </td>
         <td class="p-4 text-slate-500 dark:text-slate-400">
           {{ connection.url }}
@@ -56,7 +56,7 @@ defineProps({
           {{ connection.database }}
         </td>
         <td>
-          <Link :href="route('connect', {name: name})">
+          <Link :href="route('admin', { selectedConnection: name })">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" class="self-center shrink-0 stroke-red-500 w-6 h-6 mx-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
             </svg>
