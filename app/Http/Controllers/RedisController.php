@@ -25,6 +25,12 @@ class RedisController extends Controller
         return $this->selectedConnection;
     }
 
+    public function stats()
+    {
+        $redis = $this->getRedis();
+        return $redis->info();
+    }
+
     // public function alphabet()
     // {
     //     $redis = $this->getRedis();

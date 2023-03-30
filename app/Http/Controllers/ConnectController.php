@@ -14,10 +14,22 @@ class ConnectController extends Controller
     {
         $redisController = new RedisController($selectedConnection);
 
+        return Inertia::render('Connections', [
+            'connections' => $redisController->getConnections(),
+            'selectedConnection' => $selectedConnection ?? key($redisController->getConnections()),
+            'tree' => $redisController->index(),
+        ]);
+    }
+
+    public function serverStats(?string $selectedConnection = null)
+    {
+        $redisController = new RedisController($selectedConnection);
+
         return Inertia::render('Dashboard', [
             'connections' => $redisController->getConnections(),
             'selectedConnection' => $selectedConnection ?? key($redisController->getConnections()),
             'tree' => $redisController->index(),
+            'stats' => $redisController->stats(),
         ]);
     }
 
@@ -25,7 +37,7 @@ class ConnectController extends Controller
     {
         $redisController = new RedisController($selectedConnection);
 
-        return Inertia::render('Connections', [
+        return Inertia::render('Dashboard', [
             'connections' => $redisController->getConnections(),
             'selectedConnection' => $selectedConnection ?? key($redisController->getConnections()),
             'tree' => $redisController->index(),

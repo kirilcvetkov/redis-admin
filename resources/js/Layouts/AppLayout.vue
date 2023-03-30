@@ -55,7 +55,7 @@ const logout = () => {
 
               <!-- Navigation Links -->
               <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                <NavLink :href="route('home')" :active="route().current('home')">
+                <NavLink :href="route('connections')" :active="route().current('connections')">
                   Connections
                 </NavLink>
               </div>
@@ -222,7 +222,7 @@ const logout = () => {
 
       <!-- Page Heading -->
       <header v-show="$slots.header" class="sm:ml-64 mt-14 bg-transparent shadow">
-        <div class="max-w-7xl mx-auto py-8 px-6 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto pt-12 pb-8 px-6 sm:px-6 lg:px-8">
           <slot name="header" />
         </div>
       </header>
