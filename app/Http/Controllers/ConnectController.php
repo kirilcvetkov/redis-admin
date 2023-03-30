@@ -14,7 +14,7 @@ class ConnectController extends Controller
     {
         $redisController = new RedisController($selectedConnection);
 
-        return Inertia::render('Admin', [
+        return Inertia::render('Connections', [
             'connections' => $redisController->getConnections(),
             'selectedConnection' => $selectedConnection ?? key($redisController->getConnections()),
             'tree' => $redisController->index(),
