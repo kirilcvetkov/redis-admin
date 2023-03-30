@@ -10,6 +10,17 @@ use Inertia\Inertia;
 
 class ConnectController extends Controller
 {
+    public function connections(?string $selectedConnection = null)
+    {
+        $redisController = new RedisController($selectedConnection);
+
+        return Inertia::render('Dashboard', [
+            'connections' => $redisController->getConnections(),
+            'selectedConnection' => $selectedConnection ?? key($redisController->getConnections()),
+            'tree' => $redisController->index(),
+        ]);
+    }
+
     public function index(?string $selectedConnection = null)
     {
         $redisController = new RedisController($selectedConnection);
