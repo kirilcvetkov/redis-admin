@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 // use Illuminate\Redis\Connections\PhpRedisConnection;
 use Illuminate\Support\Facades\Redis;
@@ -28,7 +29,29 @@ class RedisController extends Controller
     public function stats()
     {
         $redis = $this->getRedis();
-        return $redis->info();
+        $info = $redis->info();
+
+        return [[
+                'name' => 'Number of keys',
+                'value' => $redis->dbSize(),
+            ], [
+                'name' => 'Redis Version',
+                'value' => $info['redis_version'],
+            ], [
+                'name' => 'Redis Mode',
+                'value' => $info['redis_mode'],
+            ], [
+                'name' => 'Uptime (sec)',
+                'value' =>
+                    Carbon::createFromTimestamp(time() - $info['uptime_in_seconds'])
+                        ->longAbsoluteDiffForHumans()
+            ], [
+                'name' => 'Used Memory',
+                'value' => $info['used_memory_human'],
+            ], [
+                'name' => 'Last disk save',
+                'value' => (new Carbon($redis->lastSave()))->diffForHumans()
+        ]];
     }
 
     // public function alphabet()

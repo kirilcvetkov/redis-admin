@@ -4,7 +4,6 @@ defineProps({
   tab: { type: String, default: 'default' }
 });
 </script>
-
 <template>
   <AppLayout title="Dashboard">
     <template #header>
@@ -17,7 +16,7 @@ defineProps({
       <div class="sm:hidden">
         <label for="tabs" class="sr-only">Select tab</label>
         <select id="tabs" class="bg-gray-50 border-0 border-b border-gray-200 text-gray-900 text-sm rounded-t-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          <option>Statistics</option>
+          <option>Server Stats</option>
           <option>Services</option>
           <option>FAQ</option>
         </select>
@@ -26,51 +25,54 @@ defineProps({
         <li class="w-full">
           <button
             id="stats-tab" data-tabs-target="#stats" type="button" role="tab" aria-controls="stats" aria-selected="true"
-            class="inline-block w-full p-4 rounded-tl-lg bg-gray-50 hover:bg-gray-100 focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600"
+            class="inline-block w-full p-4 rounded-tl-lg hover:bg-gray-100 focus:outline-none"
             @click="tab = 'default'"
-          >Statistics</button>
+            :class="{
+              'text-blue-600 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-500 border-blue-600 dark:border-blue-500': tab == 'default',
+              'bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600': tab != 'default',
+            }"
+          >Server Stats</button>
         </li>
         <li class="w-full">
           <button
             id="about-tab" data-tabs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="false"
-            class="inline-block w-full p-4 bg-gray-50 hover:bg-gray-100 focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600"
+            class="inline-block w-full p-4 bg-gray-50 hover:bg-gray-100 focus:outline-none"
             @click="tab = 'tab2'"
+            :class="{
+              'text-blue-600 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-500 border-blue-600 dark:border-blue-500': tab == 'tab2',
+              'bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600': tab != 'tab2',
+            }"
           >Services</button>
         </li>
         <li class="w-full">
           <button
             id="faq-tab" data-tabs-target="#faq" type="button" role="tab" aria-controls="faq" aria-selected="false"
-            class="inline-block w-full p-4 rounded-tr-lg bg-gray-50 hover:bg-gray-100 focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600"
+            class="inline-block w-full p-4 rounded-tr-lg hover:bg-gray-100 focus:outline-none"
             @click="tab = 'tab3'"
+            :class="{
+              'text-blue-600 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-500 border-blue-600 dark:border-blue-500': tab == 'tab3',
+              'bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600': tab != 'tab3',
+            }"
           >FAQ</button>
         </li>
       </ul>
       <div id="fullWidthTabContent" class="border-t border-gray-200 dark:border-gray-600">
         <div v-show="tab == 'default'" class="p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800" id="stats" role="tabpanel" aria-labelledby="stats-tab">
-          <dl class="grid max-w-screen-xl grid-cols-2 gap-8 p-4 mx-auto text-gray-900 sm:grid-cols-3 xl:grid-cols-6 dark:text-white sm:p-8">
-            <div class="flex flex-col items-center justify-center">
-              <dt class="mb-2 text-3xl font-extrabold">73M+</dt>
-              <dd class="text-gray-500 dark:text-gray-400">Developers</dd>
-            </div>
-            <div class="flex flex-col items-center justify-center">
-              <dt class="mb-2 text-3xl font-extrabold">100M+</dt>
-              <dd class="text-gray-500 dark:text-gray-400">Public repositories</dd>
-            </div>
-            <div class="flex flex-col items-center justify-center">
-              <dt class="mb-2 text-3xl font-extrabold">1000s</dt>
-              <dd class="text-gray-500 dark:text-gray-400">Open source projects</dd>
-            </div>
-            <div class="flex flex-col items-center justify-center">
-              <dt class="mb-2 text-3xl font-extrabold">1B+</dt>
-              <dd class="text-gray-500 dark:text-gray-400">Contributors</dd>
-            </div>
-            <div class="flex flex-col items-center justify-center">
-              <dt class="mb-2 text-3xl font-extrabold">90+</dt>
-              <dd class="text-gray-500 dark:text-gray-400">Top Forbes companies</dd>
-            </div>
-            <div class="flex flex-col items-center justify-center">
-              <dt class="mb-2 text-3xl font-extrabold">4M+</dt>
-              <dd class="text-gray-500 dark:text-gray-400">Organizations</dd>
+          <dl class="grid max-w-screen-xl grid-cols-1 gap-8 p-4 mx-auto text-gray-900 sm:grid-cols-2 xl:grid-cols-3 dark:text-white sm:p-8">
+            <div
+              v-for="value in $page.props.stats"
+              class="flex flex-col items-center justify-center"
+            >
+              <dt
+                v-if="typeof value.value == 'object'"
+                v-for="(row, key) in value.value"
+                class="mb-2 text-3xl font-extrabold"
+                >{{ key + ': ' + row }}</dt>
+              <dt
+                v-else
+                class="mb-2 text-3xl font-extrabold"
+                >{{ value.value }}</dt>
+              <dd class="text-gray-500 dark:text-gray-400">{{ value.name }}</dd>
             </div>
           </dl>
         </div>
