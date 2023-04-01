@@ -17,7 +17,7 @@ defineProps({
         <label for="tabs" class="sr-only">Select tab</label>
         <select id="tabs" class="bg-gray-50 border-0 border-b border-gray-200 text-gray-900 text-sm rounded-t-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
           <option>Server Stats</option>
-          <option>Services</option>
+          <option>Slow Log ({{ $page.props.slowLog.len }})</option>
           <option>FAQ</option>
         </select>
       </div>
@@ -28,8 +28,8 @@ defineProps({
             class="inline-block w-full p-4 rounded-tl-lg hover:bg-gray-100 focus:outline-none"
             @click="tab = 'default'"
             :class="{
-              'text-blue-600 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-500 border-blue-600 dark:border-blue-500': tab == 'default',
-              'bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600': tab != 'default',
+              'bg-gray-700 text-blue-600 text-blue-500 hover:text-blue-500 hover:bg-gray-600': tab == 'default',
+              'bg-gray-700 hover:bg-gray-600': tab != 'default',
             }"
           >Server Stats</button>
         </li>
@@ -37,12 +37,15 @@ defineProps({
           <button
             id="about-tab" data-tabs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="false"
             class="inline-block w-full p-4 bg-gray-50 hover:bg-gray-100 focus:outline-none"
-            @click="tab = 'tab2'"
+            @click="tab = 'slow'"
             :class="{
-              'text-blue-600 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-500 border-blue-600 dark:border-blue-500': tab == 'tab2',
-              'bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600': tab != 'tab2',
+              'bg-gray-700 text-blue-600 text-blue-500 hover:text-blue-500 hover:bg-gray-600': tab == 'slow',
+              'bg-gray-700 hover:bg-gray-600': tab != 'slow',
             }"
-          >Services</button>
+          >
+            Slow Logs
+            <span class="bg-red-100 text-red-800 text-xs font-medium ml-1 px-2 py-0.5 rounded-full">{{ $page.props.slowLog.len }}</span>
+          </button>
         </li>
         <li class="w-full">
           <button
@@ -50,8 +53,8 @@ defineProps({
             class="inline-block w-full p-4 rounded-tr-lg hover:bg-gray-100 focus:outline-none"
             @click="tab = 'tab3'"
             :class="{
-              'text-blue-600 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-500 border-blue-600 dark:border-blue-500': tab == 'tab3',
-              'bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600': tab != 'tab3',
+              'bg-gray-700 text-blue-600 text-blue-500 hover:text-blue-500 hover:bg-gray-600': tab == 'tab3',
+              'bg-gray-700 hover:bg-gray-600': tab != 'tab3',
             }"
           >FAQ</button>
         </li>
@@ -76,31 +79,35 @@ defineProps({
             </div>
           </dl>
         </div>
-        <div v-show="tab == 'tab2'" class="p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800" id="about" role="tabpanel" aria-labelledby="about-tab">
-          <h2 class="mb-5 text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">We invest in the world’s potential</h2>
-          <!-- List -->
-          <ul role="list" class="space-y-4 text-gray-500 dark:text-gray-400">
-            <li class="flex space-x-2">
-              <!-- Icon -->
-              <svg class="flex-shrink-0 w-4 h-4 text-blue-600 dark:text-blue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-              <span class="leading-tight">Dynamic reports and dashboards</span>
-            </li>
-            <li class="flex space-x-2">
-              <!-- Icon -->
-              <svg class="flex-shrink-0 w-4 h-4 text-blue-600 dark:text-blue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-              <span class="leading-tight">Templates for everyone</span>
-            </li>
-            <li class="flex space-x-2">
-              <!-- Icon -->
-              <svg class="flex-shrink-0 w-4 h-4 text-blue-600 dark:text-blue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-              <span class="leading-tight">Development workflow</span>
-            </li>
-            <li class="flex space-x-2">
-              <!-- Icon -->
-              <svg class="flex-shrink-0 w-4 h-4 text-blue-600 dark:text-blue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-              <span class="leading-tight">Limitless business automation</span>
-            </li>
-          </ul>
+        <div v-show="tab == 'slow'" class="p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800" id="about" role="tabpanel" aria-labelledby="about-tab">
+          <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                  <th scope="col" class="px-6 py-3">ID</th>
+                  <th scope="col" class="px-6 py-3">Timestamp</th>
+                  <th scope="col" class="px-6 py-3">Execution time</th>
+                  <th scope="col" class="px-6 py-3">Command arguments</th>
+                  <th scope="col" class="px-6 py-3">Client IP/Port</th>
+                  <th scope="col" class="px-6 py-3">CLIENT</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="log in $page.props.slowLog.list"
+                  class="bg-white border-b dark:bg-gray-900 dark:border-gray-700"
+                >
+                  <th scope="row" class="px-6 py-4 font-medium text-gray-200 whitespace-nowrap">{{ log[0] }}</th>
+                  <td class="px-6 py-4" :title="log[1]">{{ log['human'] }}</td>
+                  <td class="px-6 py-4" :title="log[2]">{{ log['execTime'] }}</td>
+                  <td class="px-6 py-4">{{ log[3] }}</td>
+                  <td class="px-6 py-4">{{ log[4] }}</td>
+                  <td class="px-6 py-4">{{ log[5] }}</td>
+                </tr>
+                </tbody>
+              </table>
+          </div>
+
         </div>
         <div v-show="tab == 'tab3'" class="p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800" id="faq" role="tabpanel" aria-labelledby="faq-tab">
           <div id="accordion-flush" data-accordion="collapse" data-active-classes="bg-white dark:bg-gray-800 text-gray-900 dark:text-white" data-inactive-classes="text-gray-500 dark:text-gray-400">

@@ -30,6 +30,7 @@ class ConnectController extends Controller
             'selectedConnection' => $selectedConnection ?? key($redisController->getConnections()),
             'tree' => $redisController->index(),
             'stats' => $redisController->stats(),
+            'slowLog' => $redisController->slowLog(),
         ]);
     }
 

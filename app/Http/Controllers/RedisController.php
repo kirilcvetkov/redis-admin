@@ -54,6 +54,25 @@ class RedisController extends Controller
         ]];
     }
 
+    public function slowLog()
+    {
+        return [
+            'len' => $this->getRedis()->slowLog('len'),
+            'list' => array_map(function ($row) {
+                $row['humanTs'] = Carbon::createFromTimestamp($row[1])->diffForHumans();
+                $hours = floor($row['2'] / (60*60));
+                $miuntes = floor(($row['2'] - ($hours*60*60)) / 60);
+                $seconds = floor(($row['2'] - ($hours*60*60 + $miuntes*60)) / 60);
+                $row['execTime'] =
+                    ($hours ? ($hours . 'h ') : '') .
+                    ($miuntes ? ($miuntes . 'm ') : '') .
+                    ($seconds ? ($seconds . 's') : '');
+
+                return $row;
+            }, $this->getRedis()->slowLog('get', 100))
+        ];
+    }
+
     // public function alphabet()
     // {
     //     $redis = $this->getRedis();
