@@ -60,13 +60,13 @@ class RedisController extends Controller
             'len' => $this->getRedis()->slowLog('len'),
             'list' => array_map(function ($row) {
                 $row['humanTs'] = Carbon::createFromTimestamp($row[1])->diffForHumans();
-                $hours = floor($row['2'] / (60*60));
-                $miuntes = floor(($row['2'] - ($hours*60*60)) / 60);
-                $seconds = floor(($row['2'] - ($hours*60*60 + $miuntes*60)) / 60);
-                $row['execTime'] =
-                    ($hours ? ($hours . 'h ') : '') .
-                    ($miuntes ? ($miuntes . 'm ') : '') .
-                    ($seconds ? ($seconds . 's') : '');
+                $miuntes = floor($row['2'] / (60*1000));
+                $seconds = floor(($row['2'] - ($miuntes*60*1000)) / 1000);
+                $milliseconds = $row['2'] - ($miuntes*60*1000 + $seconds*1000);
+                $row['execTime'] = sprintf('%02d:%02d:%03d', $miuntes, $seconds ,$milliseconds);
+                    // ($miuntes ? ( . 'm ') : '') .
+                    // ($seconds ? ( . 's ') : '') .
+                    // ($milliseconds ? ($milliseconds . 'ms') : '');
 
                 return $row;
             }, $this->getRedis()->slowLog('get', 100))
@@ -165,25 +165,10 @@ class RedisController extends Controller
     public function getRedis()
     {
         $redis = Redis::connection($this->selectedConnection);
+        $redis->client('setname', env('APP_NAME'));
         $redis->setOption(\Redis::OPT_SCAN, \Redis::SCAN_RETRY);
 
         return $redis;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
     }
 
     /**
@@ -246,29 +231,5 @@ class RedisController extends Controller
             'encoding' => $encoding,
             'refcount' => $refcount,
         ];
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }

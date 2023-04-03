@@ -26,7 +26,7 @@ Route::middleware([
     Route::get('/', [ConnectController::class, 'serverStats'])
         ->name('home');
 
-    Route::get('/connections', [ConnectController::class, 'connections'])
+    Route::get('/connections/{selectedConnection?}', [ConnectController::class, 'connections'])
         ->name('connections');
 
     Route::get('/admin/{selectedConnection?}', [ConnectController::class, 'serverStats'])

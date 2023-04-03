@@ -43,7 +43,7 @@ const logout = () => {
     <div class="min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-700 selection:text-white">
       <nav class="top-0 sm:ml-64 inset-x-0 fixed bg-transparent h-14 z-30 transition-position w-screen lg:w-auto p-2">
         <!-- Primary Navigation Menu -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex justify-between h-16">
             <div class="flex">
               <!-- Logo -->
@@ -54,8 +54,11 @@ const logout = () => {
               </div> -->
 
               <!-- Navigation Links -->
-              <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                <NavLink :href="route('connections')" :active="route().current('connections')">
+              <div class="hidden space-x-8 sm:-my-px sm:flex">
+                <NavLink :href="route('home')" :active="route().current('home')">
+                  Dashboard
+                </NavLink>
+                <NavLink :href="route('connections', { selectedConnection: $page.props.selectedConnection })" :active="route().current('connections')">
                   Connections
                 </NavLink>
               </div>
@@ -83,7 +86,7 @@ const logout = () => {
 
                   <template #content>
                     <!-- Account Management -->
-                    <div class="block px-4 py-2 text-xs text-gray-400">
+                    <div class="block px-4 py-2 text-xs text-gray-500">
                       Manage Account
                     </div>
 
