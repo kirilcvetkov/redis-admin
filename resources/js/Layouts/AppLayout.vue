@@ -17,7 +17,6 @@ defineProps({
   phpVersion: String,
 });
 
-
 const showingNavigationDropdown = ref(false);
 
 const switchToTeam = (team) => {

@@ -1,7 +1,5 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-defineOptions({ layout: AppLayout })
-
 import DeleteUserForm from '@/Pages/Profile/Partials/DeleteUserForm.vue';
 import LogoutOtherBrowserSessionsForm from '@/Pages/Profile/Partials/LogoutOtherBrowserSessionsForm.vue';
 import SectionBorder from '@/Components/SectionBorder.vue';
