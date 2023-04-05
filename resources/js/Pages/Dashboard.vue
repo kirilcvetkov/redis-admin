@@ -34,7 +34,7 @@ defineProps({
         </li>
         <li class="w-full">
           <button
-            id="about-tab" data-tabs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="false"
+            id="slow-tab" data-tabs-target="#slow" type="button" role="tab" aria-controls="slow" aria-selected="false"
             class="inline-block w-full p-4 hover:bg-gray-100 focus:outline-none"
             @click="tab = 'slow'"
             :class="{
@@ -61,7 +61,7 @@ defineProps({
             </div>
           </dl>
         </div>
-        <div v-show="tab == 'slow'" class="p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800" id="about" role="tabpanel" aria-labelledby="about-tab">
+        <div v-show="tab == 'slow'" class="p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800" id="slow" role="tabpanel" aria-labelledby="slow-tab">
           <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
               <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -69,7 +69,7 @@ defineProps({
                   <th scope="col" class="px-6 py-3">ID</th>
                   <th scope="col" class="px-6 py-3">Timestamp</th>
                   <th scope="col" class="px-6 py-3">Execution time</th>
-                  <th scope="col" class="px-6 py-3">Command arguments</th>
+                  <th scope="col" class="px-6 py-3">Command / Arguments</th>
                   <th scope="col" class="px-6 py-3">CLIENT IP:Port</th>
                   <th scope="col" class="px-6 py-3">CLIENT</th>
                 </tr>
@@ -80,14 +80,14 @@ defineProps({
                   class="bg-white border-b dark:bg-gray-900 dark:border-gray-700"
                 >
                   <th scope="row" class="px-6 py-4 font-medium text-gray-200 whitespace-nowrap">{{ log[0] }}</th>
-                  <td class="px-6 py-4 text-center" :title="log[1]">{{ log['humanTs'] }}</td>
-                  <td class="px-6 py-4 text-center" :title="log[2]">{{ log['execTime'] }}</td>
+                  <td class="px-6 py-4" :title="log[1]">{{ log['humanTs'] }}</td>
+                  <td class="px-6 py-4" :title="log[2]">{{ log['execTime'] }}</td>
                   <td class="px-6 py-4">{{ log[3] }}</td>
                   <td class="px-6 py-4">{{ log[4] }}</td>
                   <td class="px-6 py-4">{{ log[5] }}</td>
                 </tr>
-                </tbody>
-              </table>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
