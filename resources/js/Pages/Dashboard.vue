@@ -56,8 +56,8 @@ defineProps({
               v-for="value in $page.props.stats"
               class="flex flex-col items-center justify-center"
             >
-              <dd class="text-gray-500 dark:text-gray-400">{{ value.name }}</dd>
-              <dt class="mt-2 text-2xl font-extrabold">{{ value.value }}</dt>
+              <dt class="text-gray-500 mt-2 text-4xl font-extrabold">{{ value.value }}</dt>
+              <dd>{{ value.name }}</dd>
             </div>
           </dl>
         </div>

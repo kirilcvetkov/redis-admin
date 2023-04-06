@@ -41,7 +41,7 @@ class RedisController extends Controller
                 'name' => 'Redis Mode',
                 'value' => $info['redis_mode'],
             ], [
-                'name' => 'Uptime (sec)',
+                'name' => 'Uptime',
                 'value' =>
                     Carbon::createFromTimestamp(time() - $info['uptime_in_seconds'])
                         ->longAbsoluteDiffForHumans()

@@ -19,6 +19,7 @@ defineProps({
       :count="item.count"
       :itemKey="item.key"
       :children="item.children"
+      :show="decodeURIComponent(route().params.key).startsWith(item.key)"
     />
   </ul>
 </template>

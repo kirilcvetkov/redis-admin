@@ -55,7 +55,7 @@ class ConnectController extends Controller
     public function get(string $selectedConnection, string $key)
     {
         $redisController = new RedisController($selectedConnection);
-// dd($redisController->show($key));
+
         return Inertia::render('Admin', [
             'connections' => $redisController->getConnections(),
             'selectedConnection' => $selectedConnection ?? key($redisController->getConnections()),

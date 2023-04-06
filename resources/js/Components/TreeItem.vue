@@ -8,7 +8,8 @@ defineProps({
   count: { type: Number, default: -1 },
   itemKey: String,
   children: Object,
-  showChildren: { type: Boolean, default: false },
+  show: { type: Boolean, default: false },
+  croute: String,
 });
 </script>
 
@@ -20,15 +21,15 @@ defineProps({
       class="text-xs flex items-center text-left w-full text-base font-normal text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
       aria-controls="dropdown-pages"
       data-collapse-toggle="dropdown-pages"
-      @click="showChildren = ! showChildren"
+      @click="show = ! show"
     >
       <ChevronRightIcon
-        v-if="! showChildren"
+        v-if="! show"
         class="w-4 h-4 mr-1 text-gray-400 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
       />
 
       <ChevronDownIcon
-        v-if="showChildren"
+        v-if="show"
         class="w-4 h-4 mr-1 text-gray-400 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
       />
 
@@ -42,27 +43,18 @@ defineProps({
     </button>
 
     <Link
-      :href="route('get', { selectedConnection: $page.props.selectedConnection, key: itemKey })"
+      v-else
       :only="['item']"
-      :active="route().current('admin')"
-      v-if="! children"
+      :href="route('get', { selectedConnection: $page.props.selectedConnection, key: itemKey })"
+      class="text-xs flex items-center pl-2 w-full text-base font-normal text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
     >
-      <button
-        v-if="! children"
-        role="link"
-        type="button"
-        class="text-xs flex items-center pl-2 w-full text-base font-normal text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-        aria-controls="dropdown-pages"
-        data-collapse-toggle="dropdown-pages"
-      >
-        <DocumentIcon
-          @click="showChildren = ! showChildren"
-          class="w-4 h-4 text-yellow-400 transition duration-75 dark:text-yellow-400 group-hover:text-yellow-900 dark:group-hover:text-white mr-1"
-        />
-        <span class="flex-1 text-left whitespace-nowrap">{{ name }} {{ count === -1 ? '' : '(' + count + ')' }}</span>
-      </button>
+      <DocumentIcon
+        @click="show = ! show"
+        class="w-4 h-4 text-yellow-400 transition duration-75 dark:text-yellow-400 group-hover:text-yellow-900 dark:group-hover:text-white mr-1"
+      />
+      <span class="flex-1 text-left whitespace-nowrap">{{ name }} {{ count === -1 ? '' : '(' + count + ')' }}</span>
     </Link>
 
-    <TreeList v-if="children && showChildren" class="ml-2" :tree="children" />
+    <TreeList v-if="children && show" class="ml-2" :tree="children" />
   </li>
 </template>
