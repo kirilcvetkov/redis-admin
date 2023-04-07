@@ -3,64 +3,45 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
-use Carbon\CarbonPeriod;
 use Inertia\Inertia;
 
 class ConnectController extends Controller
 {
-    public function connections(?string $selectedConnection = null)
+    private RedisController $redis;
+
+    public function __construct(Request $request)
     {
-        $redisController = new RedisController($selectedConnection);
-
-        return Inertia::render('Connections', [
-            'connections' => $redisController->getConnections(),
-            'selectedConnection' => $selectedConnection ?? key($redisController->getConnections()),
-            'tree' => $redisController->index(),
-        ]);
-    }
-
-    public function serverStats(?string $selectedConnection = null)
-    {
-        $redisController = new RedisController($selectedConnection);
-
-        return Inertia::render('Dashboard', [
-            'connections' => $redisController->getConnections(),
-            'selectedConnection' => $selectedConnection ?? key($redisController->getConnections()),
-            'tree' => $redisController->index(),
-            'stats' => $redisController->stats(),
-            'slowLog' => $redisController->slowLog(),
-        ]);
+        $this->redis = new RedisController(
+            $request->route()->parameter('selectedConnection') ?? null
+        );
     }
 
     public function index(?string $selectedConnection = null)
     {
-        $redisController = new RedisController($selectedConnection);
-
-        return Inertia::render('Dashboard', [
-            'connections' => $redisController->getConnections(),
-            'selectedConnection' => $selectedConnection ?? key($redisController->getConnections()),
-            'tree' => $redisController->index(),
-        ]);
+        return Inertia::render('Connections', $this->fillInResponse());
     }
 
-    // public function connect(string $selectedConnection)
-    // {
-    //     return Inertia::render('Admin', [
-    //         'tree' => (new RedisController($selectedConnection))->index(),
-    //     ]);
-    // }
-
-    public function get(string $selectedConnection, string $key)
+    public function show(string $selectedConnection, string $key)
     {
-        $redisController = new RedisController($selectedConnection);
+        return Inertia::render('Admin', $this->fillInResponse([
+            'item' => $this->redis->get($key),
+        ]));
+    }
 
-        return Inertia::render('Admin', [
-            'connections' => $redisController->getConnections(),
-            'selectedConnection' => $selectedConnection ?? key($redisController->getConnections()),
-            'tree' => $redisController->index(),
-            'item' => $redisController->show($key),
+    public function serverStats(?string $selectedConnection = null)
+    {
+        return Inertia::render('Dashboard', $this->fillInResponse([
+            'stats' => $this->redis->getStats(),
+            'slowLog' => $this->redis->getSlowLog(),
+        ]));
+    }
+
+    private function fillInResponse(array $response = []): array
+    {
+        return array_merge($response, [
+            'connections' => $this->redis->getConnections(),
+            'selectedConnection' => $this->redis->getSelectedConnection(),
+            'tree' => $this->redis->index(),
         ]);
     }
 }

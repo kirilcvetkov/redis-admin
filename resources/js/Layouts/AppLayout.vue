@@ -8,6 +8,7 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import TreePanel from "@/components/TreePanel.vue";
+import { CheckCircleIcon } from '@heroicons/vue/24/outline'
 
 defineProps({
   title: String,
@@ -57,9 +58,39 @@ const logout = () => {
                 <NavLink :href="route('home')" :active="route().current('home')">
                   Dashboard
                 </NavLink>
-                <NavLink :href="route('connections', { selectedConnection: $page.props.selectedConnection })" :active="route().current('connections')">
-                  Connections
-                </NavLink>
+
+                <div class="inline-flex items-center px-1 pt-1 text-sm font-medium leading-5 text-gray-200 focus:outline-none focus:border-indigo-700 transition duration-150 ease-in-out">
+                  <Dropdown align="right" width="48">
+                    <template #trigger>
+                      <span class="inline-flex rounded-md">
+                        <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-400 bg-gray-800 hover:text-gray-200 focus:outline-none transition ease-in-out duration-150">
+                          Connections
+                          <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                          </svg>
+                        </button>
+                      </span>
+                    </template>
+
+                    <template #content>
+                      <DropdownLink
+                        v-for="(connection, name) in $page.props.connections"
+                        :href="route('home', { selectedConnection: name })"
+                      >
+                        <span class="flex flex-nowrap justify-start items-center truncate">
+                          <CheckCircleIcon
+                            class="w-8 pr-2"
+                            :class="{
+                              'text-green-600': $page.props.selectedConnection == name,
+                              'text-gray-400': $page.props.selectedConnection != name,
+                            }"
+                          />
+                          {{ name }} ({{ connection.host }})
+                        </span>
+                      </DropdownLink>
+                    </template>
+                  </Dropdown>
+                </div>
               </div>
             </div>
 
@@ -142,8 +173,11 @@ const logout = () => {
         <!-- Responsive Navigation Menu -->
         <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="sm:hidden">
           <div class="pt-2 pb-3 space-y-1">
-            <ResponsiveNavLink :href="route('admin')" :active="route().current('admin')">
-              Admin
+            <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
+              Dashboard
+            </ResponsiveNavLink>
+            <ResponsiveNavLink :href="route('connections', { selectedConnection: $page.props.selectedConnection })" :active="route().current('connections')">
+              Connections
             </ResponsiveNavLink>
           </div>
 

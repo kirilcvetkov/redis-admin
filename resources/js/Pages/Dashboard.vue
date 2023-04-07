@@ -57,7 +57,7 @@ defineProps({
               class="flex flex-col items-center justify-center"
             >
               <dt class="text-gray-500 mt-2 text-4xl font-extrabold">{{ value.value }}</dt>
-              <dd>{{ value.name }}</dd>
+              <dd class="text-gray-300">{{ value.name }}</dd>
             </div>
           </dl>
         </div>
