@@ -55,10 +55,6 @@ const logout = () => {
 
               <!-- Navigation Links -->
               <div class="hidden space-x-8 sm:-my-px sm:flex">
-                <NavLink :href="route('home')" :active="route().current('home')">
-                  Dashboard
-                </NavLink>
-
                 <div class="inline-flex items-center px-1 pt-1 text-sm font-medium leading-5 text-gray-200 focus:outline-none focus:border-indigo-700 transition duration-150 ease-in-out">
                   <Dropdown align="right" width="48">
                     <template #trigger>
@@ -91,6 +87,10 @@ const logout = () => {
                     </template>
                   </Dropdown>
                 </div>
+
+                <NavLink :href="route('home')" :active="route().current('home')">
+                  Dashboard
+                </NavLink>
               </div>
             </div>
 
@@ -124,10 +124,6 @@ const logout = () => {
                       Profile
                     </DropdownLink>
 
-                    <DropdownLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')">
-                      API Tokens
-                    </DropdownLink>
-
                     <div class="border-t border-gray-200" />
 
                     <!-- Authentication -->
@@ -143,7 +139,7 @@ const logout = () => {
 
             <!-- Hamburger -->
             <div class="-mr-2 flex items-center sm:hidden">
-              <button class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out" @click="showingNavigationDropdown = ! showingNavigationDropdown">
+              <button class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-800 focus:text-gray-400 transition duration-150 ease-in-out" @click="showingNavigationDropdown = ! showingNavigationDropdown">
                 <svg
                   class="h-6 w-6"
                   stroke="currentColor"
@@ -171,25 +167,40 @@ const logout = () => {
         </div>
 
         <!-- Responsive Navigation Menu -->
-        <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="sm:hidden">
+        <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="sm:hidden bg-gray-800">
           <div class="pt-2 pb-3 space-y-1">
             <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
               Dashboard
             </ResponsiveNavLink>
-            <ResponsiveNavLink :href="route('connections', { selectedConnection: $page.props.selectedConnection })" :active="route().current('connections')">
+            <ResponsiveNavLink as="button" class="bg-gray-800">
               Connections
+            </ResponsiveNavLink>
+            <ResponsiveNavLink
+              v-for="(connection, name) in $page.props.connections"
+              :href="route('home')"
+            >
+              <span class="flex flex-nowrap justify-start items-center truncate">
+                <CheckCircleIcon
+                  class="w-8 pr-2"
+                  :class="{
+                    'text-green-600': $page.props.selectedConnection == name,
+                    'text-gray-400': $page.props.selectedConnection != name,
+                  }"
+                />
+                {{ name }} ({{ connection.host }})
+              </span>
             </ResponsiveNavLink>
           </div>
 
           <!-- Responsive Settings Options -->
-          <div class="pt-4 pb-1 border-t border-gray-200">
+          <div class="pt-4 pb-1 border-t border-gray-500">
             <div class="flex items-center px-4">
               <div v-if="$page.props.jetstream.managesProfilePhotos" class="shrink-0 mr-3">
                 <img class="h-10 w-10 rounded-full object-cover" :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
               </div>
 
               <div>
-                <div class="font-medium text-base text-gray-800">
+                <div class="font-medium text-base text-gray-500">
                   {{ $page.props.auth.user.name }}
                 </div>
                 <div class="font-medium text-sm text-gray-500">
@@ -203,54 +214,12 @@ const logout = () => {
                 Profile
               </ResponsiveNavLink>
 
-              <ResponsiveNavLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')" :active="route().current('api-tokens.index')">
-                API Tokens
-              </ResponsiveNavLink>
-
               <!-- Authentication -->
               <form method="POST" @submit.prevent="logout">
                 <ResponsiveNavLink as="button">
                   Log Out
                 </ResponsiveNavLink>
               </form>
-
-              <!-- Team Management -->
-              <template v-if="$page.props.jetstream.hasTeamFeatures">
-                <div class="border-t border-gray-200" />
-
-                <div class="block px-4 py-2 text-xs text-gray-400">
-                  Manage Team
-                </div>
-
-                <!-- Team Settings -->
-                <ResponsiveNavLink :href="route('teams.show', $page.props.auth.user.current_team)" :active="route().current('teams.show')">
-                  Team Settings
-                </ResponsiveNavLink>
-
-                <ResponsiveNavLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')" :active="route().current('teams.create')">
-                  Create New Team
-                </ResponsiveNavLink>
-
-                <div class="border-t border-gray-200" />
-
-                <!-- Team Switcher -->
-                <div class="block px-4 py-2 text-xs text-gray-400">
-                  Switch Teams
-                </div>
-
-                <template v-for="team in $page.props.auth.user.all_teams" :key="team.id">
-                  <form @submit.prevent="switchToTeam(team)">
-                    <ResponsiveNavLink as="button">
-                      <div class="flex items-center">
-                        <svg v-if="team.id == $page.props.auth.user.current_team_id" class="mr-2 h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <div>{{ team.name }}</div>
-                      </div>
-                    </ResponsiveNavLink>
-                  </form>
-                </template>
-              </template>
             </div>
           </div>
         </div>

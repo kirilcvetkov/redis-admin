@@ -137,7 +137,7 @@ return [
             'database' => env('REDIS_DB', '0'),
         ],
 
-        'locallocallocallocallocallocallocallocal' => [
+        'local' => [
             'url' => env('REDIS_LOCAL_URL'),
             'host' => env('REDIS_LOCAL_HOST', '127.0.0.1'),
             'username' => env('REDIS_LOCAL_USERNAME'),

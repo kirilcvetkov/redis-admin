@@ -6,14 +6,14 @@ import DisplayDetails from "@/components/DisplayDetails.vue";
 </script>
 
 <template>
-  <AppLayout title="Admin">
+  <AppLayout title="Item">
     <template #header>
-      <DisplayTitle :id="$page.props.item.key" />
+      <DisplayTitle :key="$page.props.item" :id="$page.props.item.key" />
     </template>
 
     <div>
-      <DisplayDetails :item="$page.props.item" />
-      <DisplayValue :item="$page.props.item" />
+      <DisplayDetails :key="$page.props.item" :item="$page.props.item" />
+      <DisplayValue :key="$page.props.item" :item="$page.props.item" />
     </div>
   </AppLayout>
 </template>

@@ -12,18 +12,18 @@ class ConnectController extends Controller
     public function __construct(Request $request)
     {
         $this->redis = new RedisController(
-            $request->route()->parameter('selectedConnection') ?? null
+            $request->route()?->parameter('selectedConnection') ?? null
         );
     }
 
     public function index(?string $selectedConnection = null)
     {
-        return Inertia::render('Connections', $this->fillInResponse());
+        return Inertia::render('Dashboard', $this->fillInResponse());
     }
 
     public function show(string $selectedConnection, string $key)
     {
-        return Inertia::render('Admin', $this->fillInResponse([
+        return Inertia::render('Show', $this->fillInResponse([
             'item' => $this->redis->get($key),
         ]));
     }
@@ -39,9 +39,9 @@ class ConnectController extends Controller
     private function fillInResponse(array $response = []): array
     {
         return array_merge($response, [
-            'connections' => $this->redis->getConnections(),
-            'selectedConnection' => $this->redis->getSelectedConnection(),
-            'tree' => $this->redis->index(),
+            'connections' => fn () => $this->redis->getConnections(),
+            'selectedConnection' => fn () => $this->redis->getSelectedConnection(),
+            'tree' => fn () => $this->redis->index(),
         ]);
     }
 }

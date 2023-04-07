@@ -17,7 +17,6 @@ use Inertia\Inertia;
 |
 */
 
-
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -26,9 +25,6 @@ Route::middleware([
     Route::get('/{selectedConnection?}', [ConnectController::class, 'serverStats'])
         ->name('home');
 
-    Route::get('/connections/{selectedConnection?}', [ConnectController::class, 'index'])
-        ->name('connections');
-
-    Route::get('/admin/{selectedConnection}/{key}', [ConnectController::class, 'show'])
-        ->name('get');
+    Route::get('/item/{selectedConnection}/{key}', [ConnectController::class, 'show'])
+        ->name('show');
 });
