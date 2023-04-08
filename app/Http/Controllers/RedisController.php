@@ -9,16 +9,22 @@ use Redis;
 
 class RedisController extends Controller
 {
+    private static PhpRedisConnection $redis;
+
     public function __construct(private ?string $selectedConnection = null)
     {
         if (
-            ! is_null($this->selectedConnection)
-            && array_key_exists($this->selectedConnection, $this->getConnections())
+            is_null($this->selectedConnection)
+            || ! array_key_exists($this->selectedConnection, $this->getConnections())
         ) {
-            return;
+            $this->selectedConnection ??= array_key_first($this->getConnections());
         }
 
-        $this->selectedConnection ??= array_key_first($this->getConnections());
+        if (! isset(self::$redis) || ! self::$redis instanceof RedisFacade) {
+            self::$redis = RedisFacade::connection($this->selectedConnection);
+            self::$redis->client('setname', env('APP_NAME'));
+            self::$redis->setOption(Redis::OPT_SCAN, Redis::SCAN_RETRY);
+        }
     }
 
     /**
@@ -26,8 +32,6 @@ class RedisController extends Controller
      */
     // public function alphabet()
     // {
-    //     $redis = $this->getRedis();
-
     //     $letters = [];
     //     $page = 100;
 
@@ -57,7 +61,7 @@ class RedisController extends Controller
         $page = 100;
 
         foreach ([...range('A', 'Z'), ...range('a', 'z'), ...range(0, 9)] as $filter) {
-            foreach ($this->getRedis()->command('keys', [$filter . '*']) ?: [] as $key) {
+            foreach (self::$redis->command('keys', [$filter . '*']) ?: [] as $key) {
                 $foundKeys = $this->fill(explode(':', $key), $foundKeys);
             }
         }
@@ -76,7 +80,7 @@ class RedisController extends Controller
         foreach ([...range('A', 'Z'), ...range('a', 'z'), ...range(0, 9)] as $filter) {
             $it = null;
 
-            foreach ($this->getRedis()->command('scan', [$it, $filter . '*', $page]) ?: [] as $key) {
+            foreach (self::$redis->command('scan', [$it, $filter . '*', $page]) ?: [] as $key) {
                 $foundKeys = $this->fill(explode(':', $key), $foundKeys);
             }
         }
@@ -111,53 +115,91 @@ class RedisController extends Controller
     }
 
     /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        //
+    }
+
+    /**
      * Display individual item from the Redis database.
      */
     public function get(string $key)
     {
-        $redis = $this->getRedis();
-
-        $ttl = $redis->ttl($key);
-        $encoding = $redis->object('encoding', $key);
-        $refcount = $redis->object('refcount', $key);
-        $typeId = $redis->type($key);
+        $ttl = self::$redis->ttl($key);
+        $encoding = self::$redis->object('encoding', $key);
+        $refcount = self::$redis->object('refcount', $key);
+        $typeId = self::$redis->type($key);
 
         switch ($typeId) {
             case Redis::REDIS_STRING:
                 $type = 'String';
-                $value = $redis->get($key);
+                $value = self::$redis->get($key);
                 break;
 
             case Redis::REDIS_SET:
                 $type = 'Set';
-                $value = $redis->sMembers($key);
+                $value = self::$redis->sMembers($key);
                 sort($value);
                 break;
 
             case Redis::REDIS_LIST:
                 $type = 'List';
-                $value = $redis->lRange($key, 0, -1);
+                $value = self::$redis->lRange($key, 0, -1);
                 break;
 
             case Redis::REDIS_ZSET:
                 $type = 'ZSet';
-                $value = array_map(function ($value) use ($redis, $key) {
+                $value = array_map(function ($value) use ($key) {
                     return [
-                        'score' => $redis->zScore($key, $value),
+                        'score' => self::$redis->zScore($key, $value),
                         'value' => $value,
                     ];
-                }, $redis->zRange($key, 0, -1));
+                }, self::$redis->zRange($key, 0, -1));
                 break;
 
             case Redis::REDIS_HASH:
                 $type = 'Hash';
-                $value = $redis->hGetAll($key);
+                $value = self::$redis->hGetAll($key);
                 ksort($value);
                 break;
 
             case Redis::REDIS_NOT_FOUND:
                 $type = 'Not found';
-                $value = $redis->get($key);
+                $value = self::$redis->get($key);
                 break;
         }
 
@@ -174,12 +216,12 @@ class RedisController extends Controller
 
     public function getCount(string $key, ?int $type = null, $value = null): int|null
     {
-        return match ($type ?? $this->getRedis()->type($key)) {
+        return match ($type ?? self::$redis->type($key)) {
             Redis::REDIS_STRING => is_string($value) ? strlen($value) : 0,
-            Redis::REDIS_SET => $this->getRedis()->sCard($key) ?: 0,
-            Redis::REDIS_LIST => $this->getRedis()->lLen($key) ?: 0,
-            Redis::REDIS_ZSET => $this->getRedis()->zCard($key) ?: 0,
-            Redis::REDIS_HASH => $this->getRedis()->hLen($key) ?: 0,
+            Redis::REDIS_SET => self::$redis->sCard($key) ?: 0,
+            Redis::REDIS_LIST => self::$redis->lLen($key) ?: 0,
+            Redis::REDIS_ZSET => self::$redis->zCard($key) ?: 0,
+            Redis::REDIS_HASH => self::$redis->hLen($key) ?: 0,
             default => is_array($value) ? count($value) : (is_string($value) ? strlen($value) : 0),
         };
     }
@@ -193,19 +235,6 @@ class RedisController extends Controller
         );
     }
 
-    public function getRedis(): PhpRedisConnection
-    {
-        static $redis;
-
-        if (! isset($redis) || ! $redis instanceof RedisFacade) {
-            $redis = RedisFacade::connection($this->selectedConnection);
-            $redis->client('setname', env('APP_NAME'));
-            $redis->setOption(Redis::OPT_SCAN, Redis::SCAN_RETRY);
-        }
-
-        return $redis;
-    }
-
     public function getSelectedConnection(): string|null
     {
         return $this->selectedConnection;
@@ -213,11 +242,11 @@ class RedisController extends Controller
 
     public function getStats()
     {
-        $info = collect($this->getRedis()->info());
+        $info = collect(self::$redis->info());
 
         return [[
                 'name' => 'Number of keys',
-                'value' => $this->getRedis()->dbSize(),
+                'value' => self::$redis->dbSize(),
             ], [
                 'name' => 'Redis Version',
                 'value' => $info->get('redis_version'),
@@ -234,14 +263,14 @@ class RedisController extends Controller
                 'value' => $info->get('used_memory_human'),
             ], [
                 'name' => 'Last disk save',
-                'value' => (new Carbon($this->getRedis()->lastSave()))->diffForHumans()
+                'value' => (new Carbon(self::$redis->lastSave()))->diffForHumans()
         ]];
     }
 
     public function getSlowLog()
     {
         return [
-            'len' => $this->getRedis()->slowLog('len'),
+            'len' => self::$redis->slowLog('len'),
             'list' => array_map(function ($row) {
                 $miuntes = floor($row['2'] / (60 * 1000));
                 $seconds = floor(($row['2'] - ($miuntes * 60 * 1000)) / 1000);
@@ -251,12 +280,20 @@ class RedisController extends Controller
                     'execTime' => sprintf('%02dm %02ds %03dms', $miuntes, $seconds, $milliseconds),
                     'humanTs' => Carbon::createFromTimestamp($row[1])->diffForHumans(),
                 ]);
-            }, $this->getRedis()->slowLog('get', 100))
+            }, self::$redis->slowLog('get', 100))
         ];
     }
 
-    public function destroy(string $key)
+    public function destroy(string $selectedConnection, string $key)
     {
-        return $this->getRedis()->delete($key);
+        if (! self::$redis->exists($key)) {
+            return response()->json(['error' => 'Item does not exist.']);
+        }
+
+        if (self::$redis->delete($key) === 0) {
+            return response()->json(['error' => 'Error while deleting item.']);
+        }
+
+        return response()->json(['success' => 'Item deleted.']);
     }
 }

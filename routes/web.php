@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RedisController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +32,6 @@ Route::middleware([
     // Route::post('/item/{selectedConnection}/{key}', [HomeController::class, 'store'])
     //     ->name('store');
 
-    Route::delete('/item/{selectedConnection}/{key}', [HomeController::class, 'destroy'])
+    Route::delete('/item/{selectedConnection}/{key}', [RedisController::class, 'destroy'])
         ->name('delete');
 });
