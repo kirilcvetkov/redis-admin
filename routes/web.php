@@ -27,4 +27,10 @@ Route::middleware([
 
     Route::get('/item/{selectedConnection}/{key}', [ConnectController::class, 'show'])
         ->name('show');
+
+    // Route::post('/item/{selectedConnection}/{key}', [ConnectController::class, 'store'])
+    //     ->name('store');
+
+    Route::delete('/item/{selectedConnection}/{key}', [ConnectController::class, 'destroy'])
+        ->name('delete');
 });

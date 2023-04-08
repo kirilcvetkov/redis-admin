@@ -254,4 +254,9 @@ class RedisController extends Controller
             }, $this->getRedis()->slowLog('get', 100))
         ];
     }
+
+    public function destroy(string $key)
+    {
+        return $this->getRedis()->delete($key);
+    }
 }

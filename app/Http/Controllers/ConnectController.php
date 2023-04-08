@@ -28,6 +28,15 @@ class ConnectController extends Controller
         ]));
     }
 
+    public function destroy(string $selectedConnection, string $key)
+    {
+        if (! $this->redis->destroy($key)) {
+            dd('error'); // todo
+        }
+
+        return redirect()->route('home');
+    }
+
     public function serverStats(?string $selectedConnection = null)
     {
         return Inertia::render('Dashboard', $this->fillInResponse([
