@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class ConnectController extends Controller
+class HomeController extends Controller
 {
     private RedisController $redis;
 
@@ -18,7 +18,10 @@ class ConnectController extends Controller
 
     public function index(?string $selectedConnection = null)
     {
-        return Inertia::render('Dashboard', $this->fillInResponse());
+        return Inertia::render('Dashboard', $this->fillInResponse([
+            'stats' => $this->redis->getStats(),
+            'slowLog' => $this->redis->getSlowLog(),
+        ]));
     }
 
     public function show(string $selectedConnection, string $key)
@@ -35,14 +38,6 @@ class ConnectController extends Controller
         }
 
         return redirect()->route('home');
-    }
-
-    public function serverStats(?string $selectedConnection = null)
-    {
-        return Inertia::render('Dashboard', $this->fillInResponse([
-            'stats' => $this->redis->getStats(),
-            'slowLog' => $this->redis->getSlowLog(),
-        ]));
     }
 
     private function fillInResponse(array $response = []): array

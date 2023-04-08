@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Inertia\Testing\AssertableInertia as Assert;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class HomeTest extends TestCase
@@ -28,15 +28,11 @@ class HomeTest extends TestCase
      */
     public function testDashboards(): void
     {
-        $user = User::factory()->create();
+        $this->actingAs(User::factory()->create());
 
-        $this->actingAs($user);
-
-        $response = $this->get(route('home'));
-
-        $response
+        $this->get(route('home'))
             ->assertStatus(200)
-            ->assertInertia(fn (Assert $page) => $page
+            ->assertInertia(fn (AssertableInertia $page) => $page
                 ->component('Dashboard')
                 ->has('connections')
                 ->has('selectedConnection')

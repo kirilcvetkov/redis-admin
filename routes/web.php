@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\ConnectController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -22,15 +22,15 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/{selectedConnection?}', [ConnectController::class, 'serverStats'])
+    Route::get('/{selectedConnection?}', [HomeController::class, 'index'])
         ->name('home');
 
-    Route::get('/item/{selectedConnection}/{key}', [ConnectController::class, 'show'])
+    Route::get('/item/{selectedConnection}/{key}', [HomeController::class, 'show'])
         ->name('show');
 
-    // Route::post('/item/{selectedConnection}/{key}', [ConnectController::class, 'store'])
+    // Route::post('/item/{selectedConnection}/{key}', [HomeController::class, 'store'])
     //     ->name('store');
 
-    Route::delete('/item/{selectedConnection}/{key}', [ConnectController::class, 'destroy'])
+    Route::delete('/item/{selectedConnection}/{key}', [HomeController::class, 'destroy'])
         ->name('delete');
 });
