@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Redis\Connections\PhpRedisConnection;
 use Illuminate\Support\Facades\Redis as RedisFacade;
 use Redis;
@@ -284,16 +285,14 @@ class RedisController extends Controller
         ];
     }
 
-    public function destroy(string $selectedConnection, string $key)
+    public function destroy(string $key)
     {
         if (! self::$redis->exists($key)) {
-            return response()->json(['error' => 'Item does not exist.']);
+            throw new Exception('Item does not exist.');
         }
 
         if (self::$redis->delete($key) === 0) {
-            return response()->json(['error' => 'Error while deleting item.']);
+            throw new Exception('Error while deleting item.');
         }
-
-        return response()->json(['success' => 'Item deleted.']);
     }
 }

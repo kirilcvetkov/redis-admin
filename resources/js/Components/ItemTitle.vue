@@ -35,9 +35,8 @@
         >
           <XCircleIcon class="w-6 h-6 text-blue-400 transition duration-75 dark:text-gray-400" />
         </button>
-        <form @submit.prevent="$emit('delete')">
+        <form @submit.prevent="router.delete(route('delete', { selectedConnection: $page.props.selectedConnection, key: id }))">
           <button
-          @click="confirmDelete = false;"
           title="Delete"
           type="submit"
           class="text-xs flex items-center mx-2 w-full text-base font-normal text-red-500 hover:text-red-300"

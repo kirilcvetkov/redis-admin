@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Throwable;
 
 class HomeController extends Controller
 {
@@ -33,11 +34,14 @@ class HomeController extends Controller
 
     public function destroy(string $selectedConnection, string $key)
     {
-        if (! $this->redis->destroy($key)) {
-            dd('error'); // todo
+        try {
+            $this->redis->destroy($key);
+            $message = ['status' => true, 'text' => 'Item deleted.'];
+        } catch (Throwable $e) {
+            $message = ['status' => false, 'text' => $e->getMessage()];
         }
 
-        return redirect()->route('home');
+        return to_route('home')->with(['message' => $message]);
     }
 
     private function fillInResponse(array $response = []): array
