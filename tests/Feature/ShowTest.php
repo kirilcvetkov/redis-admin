@@ -22,9 +22,9 @@ class ShowTest extends TestCase
 
         $redis = new RedisController();
         $defaultConnection = $redis->getSelectedConnection();
-        $randomeKey = Redis::randomKey();
+        $randomKey = Redis::randomKey();
 
-        $this->get(route('show', [$defaultConnection, $randomeKey]))
+        $this->get(route('show', [$defaultConnection, $randomKey]))
             ->assertStatus(200)
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->component('Show')

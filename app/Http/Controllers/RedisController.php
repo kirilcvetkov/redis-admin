@@ -56,7 +56,7 @@ class RedisController extends Controller
     /**
      * Get list of all keys by using KEYS command.
      */
-    public function index()
+    public function index(): array
     {
         $foundKeys = [];
         $page = 100;
