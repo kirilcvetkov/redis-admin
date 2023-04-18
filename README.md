@@ -1,7 +1,7 @@
 
 ## About Redis Admin
 
-Redis Admin is a small web application built on Laravel with Vue.js and Inertia.js.
+Redis Admin is a management app built on Laravel and Vue.js.
 
 ## Contributing
 
