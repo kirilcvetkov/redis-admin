@@ -19,6 +19,10 @@ composer install
 Like any Laravel project, the configuration files are located in the `config` folder. To setup your Redis connections, edit the `database.php` file and find the `redis` section in it.<br />
 For more information, visit the official <a href="https://laravel.com/docs/10.x/database" target="_blank">Laravel Documentation</a>.
 
+## Login
+
+The default username and password is located in `database/seeders/DatabaseSeeder.php`, line 17-18.
+
 ## Contributing
 
 Thank you for considering contributing to Redis Admin! Your contribution should follow standard guide lines.
