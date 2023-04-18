@@ -21,7 +21,7 @@ For more information, visit the official <a href="https://laravel.com/docs/10.x/
 
 ## Login
 
-The default username and password is located in `database/seeders/DatabaseSeeder.php`, line 17-18.
+The default username and password are located in `database/seeders/DatabaseSeeder.php`, line 17-18.
 
 ## Contributing
 
