@@ -16,7 +16,7 @@ composer install
 
 ## Configuration
 
-Like any Laravel project, all configuration is located in the `config/database.php` file, under `redis` section.<br />
+Like any Laravel project, all configuration is located in the `config` folder. To configure your Redis connections, edit the `database.php` file and find the `redis` section in it.<br />
 For more information, visit the official [Laravel Documentation](https://laravel.com/docs/10.x/database).
 
 ## Contributing
