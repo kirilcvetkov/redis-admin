@@ -274,11 +274,14 @@ class RedisController extends Controller
             'len' => self::$redis->slowLog('len'),
             'list' => array_map(function ($row) {
                 $miuntes = floor($row['2'] / (60 * 1000));
-                $seconds = floor(($row['2'] - ($miuntes * 60 * 1000)) / 1000);
-                $milliseconds = $row['2'] - ($miuntes * 60 * 1000 + $seconds * 1000);
+                $seconds = floor(($row['2'] % (60 * 1000)) / 1000);
+                $milliseconds = $row['2'] % 1000;
 
                 return array_merge($row, [
-                    'execTime' => sprintf('%02dm %02ds %03dms', $miuntes, $seconds, $milliseconds),
+                    'execTime' =>
+                        ($miuntes ? sprintf('%02dm', $miuntes) : null) .
+                        ($seconds ? sprintf(' %02ds', $seconds) : null) .
+                        ($milliseconds ? sprintf(' %03dms', $milliseconds) : null),
                     'humanTs' => Carbon::createFromTimestamp($row[1])->diffForHumans(),
                 ]);
             }, self::$redis->slowLog('get', 100))
