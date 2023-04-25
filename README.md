@@ -12,7 +12,7 @@ composer install
 
 2. Copy the `.env.example` to `.env` and update it, if needed.
 
-3. Point your web server to the `public` folder, or just run `php artisan serve` in the root of the project, for a quick start.
+3. Point your web server to the `public` folder. Or, for a quick start, just run `php artisan serve` in the root of the project.
 
 ## Configuration
 
