@@ -32,6 +32,19 @@ class HomeController extends Controller
         ]));
     }
 
+    public function store(string $selectedConnection, string $key, Request $request)
+    {
+        try {
+            $this->redis->store($selectedConnection, $key, $request->get('newKey'));
+            $message = ['status' => true, 'text' => 'Item renamed.'];
+            $key = $request->get('newKey');
+        } catch (Throwable $e) {
+            $message = ['status' => false, 'text' => $e->getMessage()];
+        }
+
+        return to_route('show', compact(['selectedConnection', 'key']))->with('message', $message);
+    }
+
     public function destroy(string $selectedConnection, string $key)
     {
         try {

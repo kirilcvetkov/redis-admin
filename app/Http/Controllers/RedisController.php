@@ -126,9 +126,19 @@ class RedisController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(string $selectedConnection, string $key, string $newKey)
     {
-        //
+        if ($key === $newKey) {
+            throw new Exception('Name is unchanged.');
+        }
+
+        if (! self::$redis->exists($key)) {
+            throw new Exception('Item does not exist.');
+        }
+
+        if (! self::$redis->rename($key, $newKey)) {
+            throw new Exception('Error while deleting item.');
+        }
     }
 
     /**

@@ -28,8 +28,8 @@ Route::middleware([
     Route::get('/item/{selectedConnection}/{key}', [HomeController::class, 'show'])
         ->name('show');
 
-    // Route::post('/item/{selectedConnection}/{key}', [HomeController::class, 'store'])
-    //     ->name('store');
+    Route::post('/item/{selectedConnection}/{key}', [HomeController::class, 'store'])
+        ->name('store');
 
     Route::delete('/item/{selectedConnection}/{key}', [HomeController::class, 'destroy'])
         ->name('delete');
