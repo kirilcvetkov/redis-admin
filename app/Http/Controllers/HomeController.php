@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Redis;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Throwable;
 
 class HomeController extends Controller
 {
-    private RedisController $redis;
+    private Redis $redis;
 
     public function __construct(Request $request)
     {
-        $this->redis = new RedisController(
+        $this->redis = new Redis(
             $request->route()?->parameter('selectedConnection') ?? null
         );
     }
@@ -62,7 +63,7 @@ class HomeController extends Controller
         return array_merge($response, [
             'connections' => fn () => $this->redis->getConnections(),
             'selectedConnection' => fn () => $this->redis->getSelectedConnection(),
-            'tree' => fn () => $this->redis->index(),
+            'tree' => fn () => $this->redis->keys(),
         ]);
     }
 }

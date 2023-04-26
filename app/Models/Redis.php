@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Models;
 
+use App\Models\RedisIndexingStrategies\AbstractStrategy as RedisStrategy;
+use App\Models\RedisIndexingStrategies\KeysStrategy;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Redis\Connections\PhpRedisConnection;
 use Illuminate\Support\Facades\Redis as RedisFacade;
-use Redis;
+use Redis as Base;
 
-class RedisController extends Controller
+class Redis
 {
     private static PhpRedisConnection $redis;
 
@@ -24,7 +26,7 @@ class RedisController extends Controller
         if (! isset(self::$redis) || ! self::$redis instanceof RedisFacade) {
             self::$redis = RedisFacade::connection($this->selectedConnection);
             self::$redis->client('setname', env('APP_NAME'));
-            self::$redis->setOption(Redis::OPT_SCAN, Redis::SCAN_RETRY);
+            self::$redis->setOption(Base::OPT_SCAN, Base::SCAN_RETRY);
         }
     }
 
@@ -56,32 +58,12 @@ class RedisController extends Controller
     /**
      * Get list of all keys by using KEYS command.
      */
-    public function index(): array
+    public function keys(RedisStrategy $strategy = new KeysStrategy()): array
     {
         $foundKeys = [];
-        $page = 100;
 
         foreach ([...range('A', 'Z'), ...range('a', 'z'), ...range(0, 9)] as $filter) {
-            foreach (self::$redis->command('keys', [$filter . '*']) ?: [] as $key) {
-                $foundKeys = $this->fill(explode(':', $key), $foundKeys);
-            }
-        }
-
-        return $foundKeys;
-    }
-
-    /**
-     * Get list of all keys by using SCAN command.
-     */
-    public function indexUsingScan()
-    {
-        $foundKeys = [];
-        $page = 100;
-
-        foreach ([...range('A', 'Z'), ...range('a', 'z'), ...range(0, 9)] as $filter) {
-            $it = null;
-
-            foreach (self::$redis->command('scan', [$it, $filter . '*', $page]) ?: [] as $key) {
+            foreach ($strategy->keys(self::$redis, $filter) as $key) {
                 $foundKeys = $this->fill(explode(':', $key), $foundKeys);
             }
         }
@@ -176,23 +158,23 @@ class RedisController extends Controller
         $typeId = self::$redis->type($key);
 
         switch ($typeId) {
-            case Redis::REDIS_STRING:
+            case Base::REDIS_STRING:
                 $type = 'String';
                 $value = self::$redis->get($key);
                 break;
 
-            case Redis::REDIS_SET:
+            case Base::REDIS_SET:
                 $type = 'Set';
                 $value = self::$redis->sMembers($key);
                 sort($value);
                 break;
 
-            case Redis::REDIS_LIST:
+            case Base::REDIS_LIST:
                 $type = 'List';
                 $value = self::$redis->lRange($key, 0, -1);
                 break;
 
-            case Redis::REDIS_ZSET:
+            case Base::REDIS_ZSET:
                 $type = 'ZSet';
                 $value = array_map(function ($value) use ($key) {
                     return [
@@ -202,13 +184,13 @@ class RedisController extends Controller
                 }, self::$redis->zRange($key, 0, -1));
                 break;
 
-            case Redis::REDIS_HASH:
+            case Base::REDIS_HASH:
                 $type = 'Hash';
                 $value = self::$redis->hGetAll($key);
                 ksort($value);
                 break;
 
-            case Redis::REDIS_NOT_FOUND:
+            case Base::REDIS_NOT_FOUND:
                 $type = 'Not found';
                 $value = self::$redis->get($key);
                 break;
@@ -228,11 +210,11 @@ class RedisController extends Controller
     public function getCount(string $key, ?int $type = null, $value = null): int|null
     {
         return match ($type ?? self::$redis->type($key)) {
-            Redis::REDIS_STRING => is_string($value) ? strlen($value) : 0,
-            Redis::REDIS_SET => self::$redis->sCard($key) ?: 0,
-            Redis::REDIS_LIST => self::$redis->lLen($key) ?: 0,
-            Redis::REDIS_ZSET => self::$redis->zCard($key) ?: 0,
-            Redis::REDIS_HASH => self::$redis->hLen($key) ?: 0,
+            Base::REDIS_STRING => is_string($value) ? strlen($value) : 0,
+            Base::REDIS_SET => self::$redis->sCard($key) ?: 0,
+            Base::REDIS_LIST => self::$redis->lLen($key) ?: 0,
+            Base::REDIS_ZSET => self::$redis->zCard($key) ?: 0,
+            Base::REDIS_HASH => self::$redis->hLen($key) ?: 0,
             default => is_array($value) ? count($value) : (is_string($value) ? strlen($value) : 0),
         };
     }
