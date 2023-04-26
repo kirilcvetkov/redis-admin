@@ -4,7 +4,7 @@ namespace App\Models\RedisIndexingStrategies;
 
 use Illuminate\Redis\Connections\PhpRedisConnection;
 
-class KeysStrategy extends AbstractStrategy
+class KeysStrategy implements Strategy
 {
     public function keys(PhpRedisConnection &$redis, string $filter): array
     {

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\RedisIndexingStrategies\AbstractStrategy as RedisStrategy;
+use App\Models\RedisIndexingStrategies\Strategy as IndexingStrategy;
 use App\Models\RedisIndexingStrategies\KeysStrategy;
 use Carbon\Carbon;
 use Exception;
@@ -58,7 +58,7 @@ class Redis
     /**
      * Get list of all keys by using KEYS command.
      */
-    public function keys(RedisStrategy $strategy = new KeysStrategy()): array
+    public function keys(IndexingStrategy $strategy = new KeysStrategy()): array
     {
         $foundKeys = [];
 

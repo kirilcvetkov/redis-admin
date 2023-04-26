@@ -4,7 +4,7 @@ namespace App\Models\RedisIndexingStrategies;
 
 use Illuminate\Redis\Connections\PhpRedisConnection;
 
-class ScanStrategy extends AbstractStrategy
+class ScanStrategy implements Strategy
 {
     private $it = null;
 
