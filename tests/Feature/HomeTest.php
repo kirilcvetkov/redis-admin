@@ -26,7 +26,7 @@ class HomeTest extends TestCase
     /**
      * Dashboard test.
      */
-    public function testDashboards(): void
+    public function testDashboard(): void
     {
         $this->actingAs(User::factory()->create());
 

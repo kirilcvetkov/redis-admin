@@ -2,34 +2,47 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Http\Controllers\RedisController;
+use App\Models\Redis as RedisModel;
+use App\Models\RedisIndexingStrategies\KeysStrategy;
+use App\Models\RedisIndexingStrategies\ScanStrategy;
+use App\Models\RedisIndexingStrategies\Strategy as IndexingStrategy;
 use Illuminate\Support\Facades\Redis;
-use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class RedisTest extends TestCase
 {
-    private RedisController $redis;
+    private RedisModel $redis;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->randomKey = Redis::randomKey();
-        $this->redis = new RedisController();
-        // $defaultConnection = $this->redis->getSelectedConnection();
+        $this->redis = new RedisModel();
     }
 
-    public function testIndex(): void
+    public static function provider()
     {
-        $index = $this->redis->index();
+        return [
+            'KeysStrategy' => [new KeysStrategy()],
+            'ScanStrategy' => [new ScanStrategy()],
+        ];
+    }
 
-        $this->assertIsArray($index);
+    /**
+     * @dataProvider provider
+     */
+    public function testIndex($strategy): void
+    {
+        $this->assertInstanceOf(IndexingStrategy::class, $strategy);
+
+        $keys = $this->redis->keys($strategy);
+
+        $this->assertIsArray($keys);
 
         foreach (explode(':', $this->randomKey) as $part) {
-            $this->assertTrue(array_key_exists($part, $index));
-            $index = $index[$part]['children'] ?? null;
+            $this->assertTrue(array_key_exists($part, $keys));
+            $keys = $keys[$part]['children'] ?? null;
         }
     }
 

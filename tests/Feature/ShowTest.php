@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Http\Controllers\RedisController;
+use App\Models\Redis as RedisModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Redis;
 use Inertia\Testing\AssertableInertia;
@@ -20,7 +20,7 @@ class ShowTest extends TestCase
     {
         $this->actingAs(User::factory()->create());
 
-        $redis = new RedisController();
+        $redis = new RedisModel();
         $defaultConnection = $redis->getSelectedConnection();
         $randomKey = Redis::randomKey();
 
