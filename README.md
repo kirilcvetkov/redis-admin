@@ -24,6 +24,12 @@ For more information, visit the official <a href="https://laravel.com/docs/10.x/
 
 The default username and password are located in `database/seeders/DatabaseSeeder.php`, line 17-18.
 
+### Testing
+
+```bash
+composer test
+```
+
 ## Contributing
 
 Thank you for considering contributing to Redis Admin! Your contribution should follow standard guide lines.
